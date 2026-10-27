@@ -1,0 +1,28 @@
+{
+  "name": "murad-ios-studio",
+  "version": "0.1.0",
+  "description": "Agentic pipeline that takes an iOS app from a one-line idea to the App Store: research, PRD, design, architecture, code, review/QA, TestFlight, submission.",
+  "author": {
+    "name": "Ali Murad",
+    "url": "https://github.com/rxalimurad-art"
+  },
+  "homepage": "https://github.com/rxalimurad-art/murad-ios-studio",
+  "repository": "https://github.com/rxalimurad-art/murad-ios-studio",
+  "license": "MIT",
+  "keywords": ["ios", "swift", "swiftui", "app-store", "testflight", "agents", "pipeline"],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Murad iOS Studio",
+    "shortDescription": "Idea-to-App-Store agent team for iOS",
+    "longDescription": "A studio of specialist skills (researcher, PM, designer, architect, developer, reviewer, QA, release manager) that drives an iOS app from idea to submission. Two checkpoints: scope-lock and ship. Verified builds, tests, and screenshots at every step. On Codex, each role and pipeline stage is a skill ($app-researcher, $app-init, etc.) run in the main thread rather than a dedicated subagent.",
+    "developerName": "Ali Murad",
+    "category": "Developer Tools",
+    "capabilities": ["Interactive", "Write"],
+    "defaultPrompt": [
+      "Use $app-run to build a habit tracker for new parents",
+      "Use $app-init to scope a recipe-sharing iOS app",
+      "Use $app-status to check the studio board"
+    ]
+  }
+}

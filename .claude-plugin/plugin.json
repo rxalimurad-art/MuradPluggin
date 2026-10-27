@@ -6,7 +6,7 @@
   "author": {
     "name": "Ali Murad"
   },
-  "repository": "https://github.com/rxalimurad-art/MuradPluggin",
+  "repository": "https://github.com/rxalimurad-art/murad-ios-studio",
   "license": "MIT",
   "keywords": ["ios", "swift", "swiftui", "app-store", "testflight", "agents", "pipeline"],
   "mcpServers": {

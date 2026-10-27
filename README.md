@@ -1,10 +1,10 @@
 # Murad iOS Studio (`murad-ios-studio`)
 
-Repo: https://github.com/rxalimurad-art/MuradPluggin
+Repo: https://github.com/rxalimurad-art/murad-ios-studio
 
-A Claude Code plugin that runs a **studio of specialist agents** taking an iOS app from a
-one-line idea to the App Store. You give the idea and approve two gates — the studio handles
-the hundred steps in between.
+A **studio of specialist agents** taking an iOS app from a one-line idea to the App Store. You
+give the idea and approve two gates — the studio handles the hundred steps in between. Works as
+a native plugin in Claude Code, Kimi Code, Codex CLI, and Gemini CLI.
 
 ```
 idea → research → PRD → design → architecture → build → review/QA → TestFlight → App Store
@@ -22,20 +22,20 @@ idea → research → PRD → design → architecture → build → review/QA �
 From the GitHub repo (Claude Code 2.1.275+, one step):
 
 ```
-/plugin install murad-ios-studio --marketplace rxalimurad-art/MuradPluggin
+/plugin install murad-ios-studio --marketplace rxalimurad-art/murad-ios-studio
 ```
 
 On older versions, add the marketplace first:
 
 ```
-/plugin marketplace add rxalimurad-art/MuradPluggin
+/plugin marketplace add rxalimurad-art/murad-ios-studio
 /plugin install murad-ios-studio@murad-studio
 ```
 
 Or from a local clone of this directory:
 
 ```
-/plugin marketplace add /Users/alimurad/Documents/GitHub/MuradPluggin
+/plugin marketplace add /Users/alimurad/Documents/GitHub/murad-ios-studio
 /plugin install murad-ios-studio@murad-studio
 ```
 
@@ -52,9 +52,46 @@ The repo keeps both manifests — `.claude-plugin/plugin.json` for Claude Code a
 (`when_to_use` + `whenToUse`, `WebFetch` + `FetchURL`), so the same checkout installs in either:
 
 ```
-/plugins install https://github.com/rxalimurad-art/MuradPluggin
+/plugins install https://github.com/rxalimurad-art/murad-ios-studio
 /reload
 ```
+
+### Codex CLI
+
+This repo is also a valid Codex plugin (`.codex-plugin/plugin.json`). Codex has no slash
+commands or named subagents, so every command and agent is exposed as a skill instead
+(`$app-run`, `$app-init`, `$ios-developer`, etc. — see [Running on Codex/Gemini](#running-on-codexgemini-vs-claude-codekimi-code) below).
+
+```
+codex plugin marketplace add /Users/alimurad/Documents/GitHub/murad-ios-studio
+codex plugin add murad-ios-studio
+```
+
+(swap the local path for `rxalimurad-art/murad-ios-studio` to install straight from GitHub).
+
+### Gemini CLI
+
+This repo is also a valid Gemini CLI extension (`gemini-extension.json`), with the same six
+pipeline stages exposed both as skills and as `/`-style TOML commands under `commands/*.toml`
+(`/app-run`, `/app-init`, …).
+
+```
+gemini extensions install https://github.com/rxalimurad-art/murad-ios-studio
+```
+
+## Running on Codex/Gemini vs. Claude Code/Kimi Code
+
+Claude Code and Kimi Code dispatch each specialist as an isolated subagent. Codex CLI and
+Gemini CLI have no equivalent for custom named subagents, so there the same 8 roles and 6
+pipeline stages are exposed as **skills** (`skills/app-researcher`, `skills/app-init`, …) that
+each do one thing: read the canonical instructions in `agents/*.md` or `commands/*.md` and
+follow them in the current thread instead of a separate context. The pipeline contract itself
+(stages, the two gates, the board format, verify-before-done) is identical on every runtime —
+see the `studio-pipeline` skill. Gemini additionally gets `commands/*.toml` wrappers so the six
+stages also show up as native `/`-commands there.
+
+`agents/`, `commands/`, and `skills/` are the source of truth; the bridge skills under `skills/`
+just point at them, so there's one place to edit the actual studio behavior.
 
 ## Quickstart
 
@@ -75,6 +112,8 @@ Or drive the stages manually:
 ```
 
 ## The team
+
+Dispatched as a subagent on Claude Code/Kimi Code, run in-thread as a skill on Codex/Gemini CLI.
 
 | Agent | Role |
 | --- | --- |
