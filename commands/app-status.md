@@ -1,5 +1,5 @@
 ---
-description: Standup — prints the project's current state: vision goal, board summary, open bugs, blockers, and the recommended next action
+description: Standup — prints the project's current state — vision goal, board summary, open bugs, blockers, and the recommended next action
 ---
 
 Invoke the `studio-pipeline` skill and give the user a standup from the docs — no new work.

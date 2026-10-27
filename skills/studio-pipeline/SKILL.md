@@ -65,3 +65,22 @@ An agent's self-report is never sufficient — the commands must have exited zer
 When a requirement is ambiguous or a dependency is missing, do not guess. Write a blocker
 into the board row and the standup, and surface it to the user verbatim in your final
 message. A stopped line is cheaper than a wrong build.
+
+## Running this contract on a runtime without subagents
+
+Claude Code and Kimi Code dispatch each stage's owner as an isolated subagent (`agents/*.md`).
+Codex CLI and Gemini CLI have no equivalent dispatch primitive for custom named subagents, so
+on those runtimes the studio's pipeline stages and roles are exposed as skills instead
+(`$app-init`, `$app-researcher`, etc. — see `skills/app-*` and `skills/<role-name>` in this
+plugin). When one of those bridge skills calls for a role from the table above:
+
+1. Open that role's file at `agents/<role>.md` in this plugin (resolve the path relative to
+   this plugin's own root, not the user's project directory — the bridge skill you're reading
+   names the exact relative path to use).
+2. Adopt that file's persona and instructions for the step: same inputs, same outputs, same
+   "Verify before done" rule above.
+3. Do the work in the current thread (there is no isolated subagent context), then continue to
+   the pipeline's next stage.
+
+Everything else in this contract — stages, artifacts, the two gates, the board format, and the
+verify-before-done rule — applies unchanged regardless of runtime.

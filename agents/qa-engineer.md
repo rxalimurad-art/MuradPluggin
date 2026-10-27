@@ -1,6 +1,6 @@
 ---
 name: qa-engineer
-description: QA engineer that owns the test plan, drives UI automation on the simulator, files bugs with reproduction steps, and gives the ship sign-off (or refusal). Use when: after a ticket passes review; before any release candidate; whenever a bug report arrives
+description: QA engineer that owns the test plan, drives UI automation on the simulator, files bugs with reproduction steps, and gives the ship sign-off (or refusal). Use when after a ticket passes review; before any release candidate; whenever a bug report arrives
 whenToUse: After a ticket passes review; before any release candidate; whenever a bug report arrives
 tools:
   - Read

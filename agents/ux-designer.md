@@ -1,6 +1,6 @@
 ---
 name: ux-designer
-description: UX designer that turns the PRD into flows, a screen-and-state inventory, and a design-token sheet precise enough for SwiftUI implementation, writing docs/12-design.md. Use when: after the PRD exists, before architecture and build; when a screen's states are unclear
+description: UX designer that turns the PRD into flows, a screen-and-state inventory, and a design-token sheet precise enough for SwiftUI implementation, writing docs/12-design.md. Use when after the PRD exists, before architecture and build; when a screen's states are unclear
 whenToUse: After the PRD exists, before architecture and build; when a screen's states are unclear
 tools:
   - Read

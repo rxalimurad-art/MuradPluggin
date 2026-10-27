@@ -1,6 +1,6 @@
 ---
 name: app-researcher
-description: Product researcher that validates an iOS app idea — competitors, App Store category dynamics, target users, and positioning — and writes docs/01-research.md. Use when: first stage of a new app (or a major new direction); before any PRD is written
+description: Product researcher that validates an iOS app idea — competitors, App Store category dynamics, target users, and positioning — and writes docs/01-research.md. Use when first stage of a new app (or a major new direction); before any PRD is written
 whenToUse: First stage of a new app (or a major new direction); before any PRD is written
 tools:
   - Read

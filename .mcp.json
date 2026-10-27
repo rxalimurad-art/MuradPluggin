@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "mobilebuildmcp": {
+      "command": "npx",
+      "args": ["-y", "mobilebuildmcp@latest", "mcp"],
+      "env": {
+        "MOBILEBUILDMCP_ENABLED_WORKFLOWS": "simulator,ui-automation,debugging,logging"
+      }
+    }
+  }
+}
