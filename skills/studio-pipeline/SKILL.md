@@ -2,6 +2,7 @@
 name: studio-pipeline
 description: The orchestration contract for the Murad iOS Studio pipeline — stages, artifacts, human gates, board format, and the verify-before-done rule that every command and agent follows
 type: prompt
+when_to_use: At the start of any /murad-ios-studio:* command, and whenever an agent is unsure what stage it is in or what artifact it owns
 whenToUse: At the start of any /murad-ios-studio:* command, and whenever an agent is unsure what stage it is in or what artifact it owns
 ---
 

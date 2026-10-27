@@ -1,6 +1,6 @@
 ---
 name: product-manager
-description: Product manager that turns research into a shippable PRD — user stories, MoSCoW-prioritized MVP scope, and a backlog — writing docs/10-prd.md and docs/11-backlog.md
+description: Product manager that turns research into a shippable PRD — user stories, MoSCoW-prioritized MVP scope, and a backlog — writing docs/10-prd.md and docs/11-backlog.md. Use when: after research exists; whenever scope is questioned or the backlog needs re-planning
 whenToUse: After research exists; whenever scope is questioned or the backlog needs re-planning
 tools:
   - Read

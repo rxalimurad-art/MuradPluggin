@@ -1,6 +1,6 @@
 ---
 name: code-reviewer
-description: The merge gate — reviews each implemented ticket against acceptance criteria, house conventions, and data-path correctness (every writer/reader of touched data), returning a verdict of approved or changes with severity-ranked findings
+description: The merge gate — reviews each implemented ticket against acceptance criteria, house conventions, and data-path correctness (every writer/reader of touched data), returning a verdict of approved or changes with severity-ranked findings. Use when: for every ticket entering in-review; before any merge; on request for a deeper audit
 whenToUse: For every ticket entering in-review; before any merge; on request for a deeper audit
 tools:
   - Read

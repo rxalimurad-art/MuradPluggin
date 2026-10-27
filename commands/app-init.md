@@ -1,5 +1,6 @@
 ---
 description: Stages 1–5 only — research the idea in $ARGUMENTS and produce the vision, PRD, design, and architecture docs, then stop at GATE 1 (scope-lock)
+argument-hint: <one-line app idea>
 ---
 
 Invoke the `studio-pipeline` skill and run stages 1–5 of its contract for this idea: $ARGUMENTS

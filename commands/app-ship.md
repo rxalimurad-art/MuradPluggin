@@ -1,5 +1,6 @@
 ---
 description: Release stage — prepares all store assets and the TestFlight/App Store upload via the release manager and QA sign-off, then stops at GATE 2 for user confirmation; $ARGUMENTS optionally sets the version
+argument-hint: [version]
 ---
 
 Invoke the `studio-pipeline` skill and run stage 8. Optional version: $ARGUMENTS

@@ -1,6 +1,6 @@
 ---
 name: ios-developer
-description: iOS developer that implements backlog tickets to done — SwiftUI, SwiftData, tests — building, running, and screenshotting on the simulator via MobileBuildMCP to prove every claim
+description: iOS developer that implements backlog tickets to done — SwiftUI, SwiftData, tests — building, running, and screenshotting on the simulator via MobileBuildMCP to prove every claim. Use when: for every board ticket in status ready/in-progress; for any code change in a studio project
 whenToUse: For every board ticket in status ready/in-progress; for any code change in a studio project
 tools:
   - Read

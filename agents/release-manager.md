@@ -1,6 +1,6 @@
 ---
 name: release-manager
-description: Release manager that owns everything from green tests to submission — versioning, fastlane signing, screenshots, ASC metadata, privacy manifest, TestFlight, and the final upload after GATE 2
+description: Release manager that owns everything from green tests to submission — versioning, fastlane signing, screenshots, ASC metadata, privacy manifest, TestFlight, and the final upload after GATE 2. Use when: during app-ship; whenever signing, versioning, metadata, or App Store Connect is involved
 whenToUse: During app-ship; whenever signing, versioning, metadata, or App Store Connect is involved
 tools:
   - Read
