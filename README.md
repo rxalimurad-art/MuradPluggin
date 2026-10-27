@@ -1,6 +1,6 @@
 # Murad iOS Studio (`murad-ios-studio`)
 
-Repo: https://github.com/rxalimurad-art/MuradPluggin
+Repo: https://github.com/rxalimurad-art/murad-ios-studio
 
 A Claude Code plugin that runs a **studio of specialist agents** taking an iOS app from a
 one-line idea to the App Store. You give the idea and approve two gates — the studio handles
@@ -22,20 +22,20 @@ idea → research → PRD → design → architecture → build → review/QA �
 From the GitHub repo (Claude Code 2.1.275+, one step):
 
 ```
-/plugin install murad-ios-studio --marketplace rxalimurad-art/MuradPluggin
+/plugin install murad-ios-studio --marketplace rxalimurad-art/murad-ios-studio
 ```
 
 On older versions, add the marketplace first:
 
 ```
-/plugin marketplace add rxalimurad-art/MuradPluggin
+/plugin marketplace add rxalimurad-art/murad-ios-studio
 /plugin install murad-ios-studio@murad-studio
 ```
 
 Or from a local clone of this directory:
 
 ```
-/plugin marketplace add /Users/alimurad/Documents/GitHub/MuradPluggin
+/plugin marketplace add /Users/alimurad/Documents/GitHub/murad-ios-studio
 /plugin install murad-ios-studio@murad-studio
 ```
 
@@ -52,7 +52,7 @@ The repo keeps both manifests — `.claude-plugin/plugin.json` for Claude Code a
 (`when_to_use` + `whenToUse`, `WebFetch` + `FetchURL`), so the same checkout installs in either:
 
 ```
-/plugins install https://github.com/rxalimurad-art/MuradPluggin
+/plugins install https://github.com/rxalimurad-art/murad-ios-studio
 /reload
 ```
 
