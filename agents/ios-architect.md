@@ -1,6 +1,6 @@
 ---
 name: ios-architect
-description: iOS architect that turns PRD + design into technical decisions — module layout, persistence, ADRs, and git/CI strategy — writing docs/20-architecture.md
+description: iOS architect that turns PRD + design into technical decisions — module layout, persistence, ADRs, and git/CI strategy — writing docs/20-architecture.md. Use when: after PRD and design exist, before any code; when a technical decision could change the structure
 whenToUse: After PRD and design exist, before any code; when a technical decision could change the structure
 tools:
   - Read

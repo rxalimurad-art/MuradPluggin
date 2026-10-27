@@ -2,6 +2,7 @@
 name: ios-engineering
 description: House engineering conventions for the iOS apps this studio builds — SwiftUI architecture, Swift 6 concurrency, Swift Testing, layering, and accessibility rules that every developer and reviewer enforces
 type: prompt
+when_to_use: When writing, modifying, or reviewing Swift/SwiftUI code in a studio project, and during architecture decisions
 whenToUse: When writing, modifying, or reviewing Swift/SwiftUI code in a studio project, and during architecture decisions
 ---
 

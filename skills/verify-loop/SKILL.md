@@ -2,6 +2,7 @@
 name: verify-loop
 description: The canonical build/test/run verification loop for studio projects — how to prove code works on a simulator with MobileBuildMCP (and the raw xcodebuild fallback), and what evidence counts as "green"
 type: prompt
+when_to_use: Before claiming any ticket is done, after fixing any build failure, and before every release candidate
 whenToUse: Before claiming any ticket is done, after fixing any build failure, and before every release candidate
 ---
 

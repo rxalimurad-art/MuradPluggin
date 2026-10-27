@@ -2,6 +2,7 @@
 name: store-release
 description: Release engineering for the studio — fastlane setup, code signing, App Store Connect metadata, privacy manifest, screenshots, TestFlight, and the App Review pre-flight checklist the release manager follows
 type: prompt
+when_to_use: During /murad-ios-studio:app-ship, when preparing a release candidate, or when anything touches signing, provisioning, ASC metadata, or submission
 whenToUse: During /murad-ios-studio:app-ship, when preparing a release candidate, or when anything touches signing, provisioning, ASC metadata, or submission
 ---
 

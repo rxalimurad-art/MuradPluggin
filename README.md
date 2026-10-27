@@ -2,7 +2,7 @@
 
 Repo: https://github.com/rxalimurad-art/MuradPluggin
 
-A Kimi Code plugin that runs a **studio of specialist agents** taking an iOS app from a
+A Claude Code plugin that runs a **studio of specialist agents** taking an iOS app from a
 one-line idea to the App Store. You give the idea and approve two gates — the studio handles
 the hundred steps in between.
 
@@ -19,24 +19,42 @@ idea → research → PRD → design → architecture → build → review/QA �
 
 ## Install
 
-From the GitHub repo:
+From the GitHub repo (Claude Code 2.1.275+, one step):
 
 ```
-/plugins install https://github.com/rxalimurad-art/MuradPluggin
-/reload
+/plugin install murad-ios-studio --marketplace rxalimurad-art/MuradPluggin
+```
+
+On older versions, add the marketplace first:
+
+```
+/plugin marketplace add rxalimurad-art/MuradPluggin
+/plugin install murad-ios-studio@murad-studio
 ```
 
 Or from a local clone of this directory:
 
 ```
-/plugins install /Users/alimurad/Documents/GitHub/MuradPluggin
-/reload
+/plugin marketplace add /Users/alimurad/Documents/GitHub/MuradPluggin
+/plugin install murad-ios-studio@murad-studio
 ```
 
-> Note: install-from-URL requires the repo to be **public** (the plugin manager downloads
+> Note: installing from the GitHub repo requires it to be **public** (the plugin manager clones
 > without auth). While it's private, use the local-path install above.
 
-Enable the MCP server the first time if prompted: `/plugins mcp enable murad-ios-studio mobilebuildmcp`, then `/reload`.
+The plugin ships the `mobilebuildmcp` MCP server; approve it when Claude Code prompts on first
+use, and check it with `/mcp`.
+
+### Kimi Code
+
+The repo keeps both manifests — `.claude-plugin/plugin.json` for Claude Code and
+`kimi.plugin.json` for Kimi Code — and the agent/skill frontmatter carries both spellings
+(`when_to_use` + `whenToUse`, `WebFetch` + `FetchURL`), so the same checkout installs in either:
+
+```
+/plugins install https://github.com/rxalimurad-art/MuradPluggin
+/reload
+```
 
 ## Quickstart
 

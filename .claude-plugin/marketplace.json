@@ -1,0 +1,16 @@
+{
+  "name": "murad-studio",
+  "owner": {
+    "name": "Ali Murad",
+    "url": "https://github.com/rxalimurad-art"
+  },
+  "description": "Murad's agentic studio plugins for Claude Code.",
+  "plugins": [
+    {
+      "name": "murad-ios-studio",
+      "source": "./",
+      "category": "development",
+      "tags": ["ios", "swift", "swiftui", "app-store", "agents"]
+    }
+  ]
+}

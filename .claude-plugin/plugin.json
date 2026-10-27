@@ -1,0 +1,21 @@
+{
+  "name": "murad-ios-studio",
+  "displayName": "Murad iOS Studio",
+  "version": "0.1.0",
+  "description": "Agentic pipeline that takes an iOS app from a one-line idea to the App Store: research, PRD, design, architecture, code, review/QA, TestFlight, submission.",
+  "author": {
+    "name": "Ali Murad"
+  },
+  "repository": "https://github.com/rxalimurad-art/MuradPluggin",
+  "license": "MIT",
+  "keywords": ["ios", "swift", "swiftui", "app-store", "testflight", "agents", "pipeline"],
+  "mcpServers": {
+    "mobilebuildmcp": {
+      "command": "npx",
+      "args": ["-y", "mobilebuildmcp@latest", "mcp"],
+      "env": {
+        "MOBILEBUILDMCP_ENABLED_WORKFLOWS": "simulator,ui-automation,debugging,logging"
+      }
+    }
+  }
+}

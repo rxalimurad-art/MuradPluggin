@@ -1,5 +1,6 @@
 ---
 description: The build loop — runs ready board tickets through developer → reviewer → QA until done or blocked; $ARGUMENTS optionally limits to specific ticket IDs
+argument-hint: [ticket-id ...]
 ---
 
 Invoke the `studio-pipeline` skill and run stage 7 of its contract. Optional ticket IDs: $ARGUMENTS

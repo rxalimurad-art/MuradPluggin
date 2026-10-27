@@ -1,5 +1,6 @@
 ---
 description: The autonomous driver — takes an app idea from $ARGUMENTS through the full pipeline to App Store submission, pausing only at the scope-lock and ship gates
+argument-hint: <one-line app idea>
 ---
 
 Run the Murad iOS Studio pipeline end to end. Start by invoking the `studio-pipeline` skill and
