@@ -1,0 +1,25 @@
+{
+  "name": "murad-ios-studio",
+  "version": "0.1.0",
+  "description": "Agentic pipeline that takes an iOS app from a one-line idea to the App Store: research, PRD, design, architecture, code, review/QA, TestFlight, submission.",
+  "keywords": ["ios", "swift", "swiftui", "app-store", "testflight", "agents", "pipeline"],
+  "author": "Murad",
+  "license": "MIT",
+  "interface": {
+    "displayName": "Murad iOS Studio",
+    "shortDescription": "Idea-to-App-Store agent team for iOS",
+    "longDescription": "A studio of specialist agents (researcher, PM, designer, architect, developer, reviewer, QA, release manager) that drives an iOS app from idea to submission. Two human gates: scope-lock and ship. Verified builds, tests, and screenshots at every step."
+  },
+  "skills": "./skills/",
+  "agents": "./agents/",
+  "commands": "./commands/",
+  "mcpServers": {
+    "mobilebuildmcp": {
+      "command": "npx",
+      "args": ["-y", "mobilebuildmcp@latest", "mcp"],
+      "env": {
+        "MOBILEBUILDMCP_ENABLED_WORKFLOWS": "simulator,ui-automation,debugging,logging"
+      }
+    }
+  }
+}
