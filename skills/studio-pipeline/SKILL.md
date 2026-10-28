@@ -20,7 +20,7 @@ Each stage reads the artifacts of the stages before it and writes exactly its ow
 | 1. Research | `app-researcher` | the idea | `docs/01-research.md` |
 | 2. Vision | main agent (from research) | `docs/01-research.md` | `docs/00-vision.md` |
 | 3. PRD | `product-manager` | `00-vision`, `01-research` | `docs/10-prd.md`, `docs/11-backlog.md` |
-| 4. Design | `ux-designer` | `10-prd` | `docs/12-design.md` |
+| 4. Design | `ux-designer`, then `icon-designer` | `10-prd`; the icon also reads `00-vision`, `12-design` | `docs/12-design.md`; `docs/13-icon.md` + `design/icon/` |
 | 5. Architecture | `ios-architect` | `10-prd`, `12-design` | `docs/20-architecture.md` |
 | 6. Board | main agent | `11-backlog` | `docs/30-board.md` |
 | 7. Build | `ios-developer` → `code-reviewer` → `qa-engineer` | board + all docs | code, `docs/51-bugs.md` |

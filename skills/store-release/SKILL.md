@@ -32,6 +32,8 @@ Connect happen only after GATE 2 (explicit user confirmation).
       matching answers staged in App Store Connect.
 - [ ] `docs/70-security-review.md` with no open high/critical findings.
 - [ ] Release notes drafted.
+- [ ] App icon: the built app's `AppIcon` has a 1024×1024 primary with no alpha channel (check
+      `sips -g hasAlpha`), and the archive builds with no asset-catalog warnings.
 
 ## App Review pre-flight
 

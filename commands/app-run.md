@@ -23,11 +23,11 @@ agent its exact inputs from the contract):
 1. `app-researcher` with the idea → `docs/01-research.md`.
 2. Write `docs/00-vision.md` yourself from the research (one page: what, who, why now, success).
 3. `product-manager` → `docs/10-prd.md` + `docs/11-backlog.md`.
-4. `ux-designer` → `docs/12-design.md`.
+4. `ux-designer` → `docs/12-design.md`, then `icon-designer` → `docs/13-icon.md` + `design/icon/`.
 5. `ios-architect` → `docs/20-architecture.md`.
 
 ## 2. GATE 1 — scope-lock
-Summarize to the user: the differentiated idea (2 sentences), the MVP Must list, the module map,
+Summarize to the user: the differentiated idea (2 sentences), the MVP Must list, the module map, the app icon (show `design/icon/AppIcon.appiconset/AppIcon-1024.png`),
 and the top risk. Ask a single clear approve/revise question. On revise: apply the user's change
 to the affected docs (re-delegate only the affected stage), then ask again. On approval: proceed.
 Do not write any code before approval.

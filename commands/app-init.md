@@ -12,11 +12,12 @@ Steps:
 2. Write `docs/00-vision.md` yourself from the research: what the app is, who it's for, why now,
    and how success is measured. One page.
 3. Delegate to `product-manager` → `docs/10-prd.md` + `docs/11-backlog.md`.
-4. Delegate to `ux-designer` → `docs/12-design.md`.
+4. Delegate to `ux-designer` → `docs/12-design.md`, then to `icon-designer` → `docs/13-icon.md` and
+   the validated `design/icon/AppIcon.appiconset`.
 5. Delegate to `ios-architect` → `docs/20-architecture.md`.
 
 Then execute GATE 1 from the contract: summarize the plan (differentiated idea in 2 sentences,
-MVP Must list, module map, top risk) and ask the user to approve or revise. Write no code.
+MVP Must list, module map, top risk, and the icon — show `design/icon/AppIcon.appiconset/AppIcon-1024.png`) and ask the user to approve or revise. Write no code.
 Log `stage_start`/`stage_end` telemetry around each stage and a `gate` event with the user's
 answer (see Telemetry in the `studio-pipeline` skill).
 

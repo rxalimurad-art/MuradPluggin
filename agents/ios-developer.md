@@ -34,7 +34,11 @@ until the verify loop proves it — green build, green tests, screenshot in hand
    When a build, test, or run step fails, classify it and follow that class's recovery and
    budget (see Self-healing in the `studio-pipeline` skill); never repeat an unchanged action that already
    failed twice. Report each recovery and its outcome in your handoff.
-6. Log a `verify` telemetry event after every build and test run, a `heal` event for every
+6. The `App icon` ticket: replace the asset catalog's `AppIcon.appiconset` with the one in
+   `design/icon/` (never edit the PNGs — icon changes go back to `icon-designer`), make sure the
+   target's app-icon setting is `AppIcon`, build with zero asset-catalog warnings, and screenshot
+   the simulator home screen showing the icon.
+7. Log a `verify` telemetry event after every build and test run, a `heal` event for every
    recovery attempt, and a `ticket` event for every status you set (see Telemetry in the `studio-pipeline` skill).
 
 ## Rules

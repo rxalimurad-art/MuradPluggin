@@ -82,7 +82,7 @@ gemini extensions install https://github.com/rxalimurad-art/murad-ios-studio
 ## Running on Codex/Gemini vs. Claude Code/Kimi Code
 
 Claude Code and Kimi Code dispatch each specialist as an isolated subagent. Codex CLI and
-Gemini CLI have no equivalent for custom named subagents, so there the same 8 roles and 6
+Gemini CLI have no equivalent for custom named subagents, so there the same 9 roles and 6
 pipeline stages are exposed as **skills** (`skills/app-researcher`, `skills/app-init`, …) that
 each do one thing: read the canonical instructions in `agents/*.md` or `commands/*.md` and
 follow them in the current thread instead of a separate context. The pipeline contract itself
@@ -146,6 +146,7 @@ Dispatched as a subagent on Claude Code/Kimi Code, run in-thread as a skill on C
 | `app-researcher` | Validates the idea: competitors, App Store category, positioning |
 | `product-manager` | PRD, user stories, MVP scope |
 | `ux-designer` | Flows, screen inventory, design tokens, SwiftUI-ready specs |
+| `icon-designer` | App icon concept and SVG masters (light/dark/tinted), rendered and validated as `AppIcon.appiconset` |
 | `ios-architect` | Stack, SPM modules, ADRs, git/CI strategy |
 | `ios-developer` | Implements features; builds/tests on the simulator via MobileBuildMCP |
 | `code-reviewer` | The merge gate — concurrency, accessibility, security, data-path defects |
@@ -155,7 +156,7 @@ Dispatched as a subagent on Claude Code/Kimi Code, run in-thread as a skill on C
 ## How it stays honest
 
 - **Docs are the source of truth.** Everything lands in `docs/` in your project
-  (`00-vision`, `01-research`, `10-prd`, `12-design`, `20-architecture`, `30-board`,
+  (`00-vision`, `01-research`, `10-prd`, `12-design`, `13-icon`, `20-architecture`, `30-board`,
   `50-test-plan`, `51-bugs`, `60-release`). Every agent reads them before acting.
 - **Nothing is "done" on an agent's say-so.** A ticket moves to review only after the
   build compiles and tests exit zero on a real simulator run.

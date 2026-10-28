@@ -10,6 +10,9 @@ Invoke the `studio-pipeline` skill. Build the board from the existing docs — d
    title, owner (`ios-developer` unless the ticket is store assets — then `release-manager`),
    dependencies, status (`ready` only when every dependency is `done`), and an empty
    Verification cell.
+   Add an `App icon` ticket owned by `ios-developer`, depending on the project-scaffold ticket:
+   copy `design/icon/AppIcon.appiconset` into the app's asset catalog as `AppIcon`; verification is
+   a clean build with no asset-catalog warnings plus a simulator home-screen screenshot.
 3. Sanity-check the board: no circular dependencies, every backlog item appears exactly once,
    and the architect's structural-risk items are scheduled early. Fix violations you find.
 4. Present the board to the user: total tickets, the first ready batch, and the dependency

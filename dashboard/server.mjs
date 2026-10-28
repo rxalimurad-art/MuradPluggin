@@ -19,7 +19,7 @@ const STAGES = [
   { id: 1, name: 'Research', owner: 'app-researcher', docs: ['01-research.md'] },
   { id: 2, name: 'Vision', owner: 'main agent', docs: ['00-vision.md'] },
   { id: 3, name: 'PRD', owner: 'product-manager', docs: ['10-prd.md', '11-backlog.md'] },
-  { id: 4, name: 'Design', owner: 'ux-designer', docs: ['12-design.md'] },
+  { id: 4, name: 'Design', owner: 'ux-designer + icon-designer', docs: ['12-design.md', '13-icon.md'] },
   { id: 5, name: 'Architecture', owner: 'ios-architect', docs: ['20-architecture.md'] },
   { id: 6, name: 'Board', owner: 'main agent', docs: ['30-board.md'] },
   { id: 7, name: 'Build', owner: 'developer → reviewer → QA', docs: [] },

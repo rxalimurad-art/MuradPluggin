@@ -15,7 +15,7 @@
   "interface": {
     "displayName": "Murad iOS Studio",
     "shortDescription": "Idea-to-App-Store agent team for iOS",
-    "longDescription": "A studio of specialist skills (researcher, PM, designer, architect, developer, reviewer, QA, release manager) that drives an iOS app from idea to submission. Two checkpoints: scope-lock and ship. Verified builds, tests, and screenshots at every step. On Codex, each role and pipeline stage is a skill ($app-researcher, $app-init, etc.) run in the main thread rather than a dedicated subagent.",
+    "longDescription": "A studio of specialist skills (researcher, PM, designer, icon designer, architect, developer, reviewer, QA, release manager) that drives an iOS app from idea to submission. Two checkpoints: scope-lock and ship. Verified builds, tests, and screenshots at every step. On Codex, each role and pipeline stage is a skill ($app-researcher, $app-init, etc.) run in the main thread rather than a dedicated subagent.",
     "developerName": "Ali Murad",
     "category": "Developer Tools",
     "capabilities": ["Interactive", "Write"],
