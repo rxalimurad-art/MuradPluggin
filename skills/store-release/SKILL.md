@@ -13,15 +13,24 @@ Connect happen only after GATE 2 (explicit user confirmation).
 
 ## Tooling
 
-- fastlane: `match` (signing/certs in a private git repo), `gym` (archive/export),
+- fastlane: `gym` (archive/export),
   `snapshot` (screenshots across devices/locales), `pilot` (TestFlight upload), `deliver`
   (metadata + submission).
 - App Store Connect API key (`.p8`): fastlane reads it from `APP_STORE_CONNECT_API_KEY_KEY_ID`,
-  `APP_STORE_CONNECT_API_KEY_ISSUER_ID`, and `APP_STORE_CONNECT_API_KEY_KEY_FILEPATH`; `match` from
-  `MATCH_GIT_URL` and `MATCH_PASSWORD`. These are the names the plugin README tells the user to
-  set. Check they exist (never print their values) before any fastlane step; if one is missing,
+  `APP_STORE_CONNECT_API_KEY_ISSUER_ID`, and `APP_STORE_CONNECT_API_KEY_KEY_FILEPATH`, and the
+  team from `APPLE_TEAM_ID`. These are the names the plugin README tells the user to set. Check they exist (never print their values) before any fastlane step; if one is missing,
   name it as a blocker and point the user to the README's "What you need to do" section. Secrets
   never go in the repo, `fastlane/Appfile`, or chat output.
+- Signing: **Xcode automatic signing** — no `match`, no certificates repo, no manual profiles.
+  The app target has `CODE_SIGN_STYLE = Automatic` and `DEVELOPMENT_TEAM = $APPLE_TEAM_ID`. Every
+  archive and export passes the API key to `xcodebuild` so Xcode can create or renew the
+  cloud-managed distribution certificate and profiles on its own, with no Xcode login prompt:
+  in `gym`, set both `xcargs` and `export_xcargs` to `-allowProvisioningUpdates
+  -authenticationKeyPath "$APP_STORE_CONNECT_API_KEY_KEY_FILEPATH" -authenticationKeyID
+  "$APP_STORE_CONNECT_API_KEY_KEY_ID" -authenticationKeyIssuerID
+  "$APP_STORE_CONNECT_API_KEY_ISSUER_ID"`, with `export_method: "app-store"`. If signing fails
+  with a permissions error, the key lacks the Admin role (or App Manager with "Access to Cloud
+  Managed Distribution Certificate") — report that to the user as a blocker.
 - Bundle/version: `CFBundleVersion` auto-increments per build; marketing version comes from
   `docs/60-release.md`.
 
@@ -53,7 +62,7 @@ Connect happen only after GATE 2 (explicit user confirmation).
 
 ## TestFlight flow
 
-1. `match` → `gym` → `pilot` uploads the build; check processing status.
+1. `gym` (automatic signing, as above) → `pilot` uploads the build; check processing status.
 2. Add internal testers, watch crash reports for the first 24h.
 3. Triage tester feedback into `docs/51-bugs.md`; only "no known blockers" proceeds to GATE 2.
 

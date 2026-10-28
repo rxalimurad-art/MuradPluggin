@@ -135,12 +135,11 @@ done by the agents.
    agreement and fill in tax and bank details. Required before you can sell anything, including
    in-app purchases; a free app needs only the free agreement.
 3. **Create an App Store Connect API key** (App Store Connect → Users and Access → Integrations →
-   App Store Connect API → Team Keys). Choose the **Admin** role if fastlane should create
-   signing certificates for you; **App Manager** is enough for uploads, store text, and
-   submission. Download the `.p8` file (Apple only lets you download it once) and note its Key ID
+   App Store Connect API → Team Keys) with the **Admin** role — Xcode needs it to create your
+   distribution certificate automatically. (App Manager also works if you tick "Access to Cloud
+   Managed Distribution Certificate" for it.) Download the `.p8` file (Apple only lets you download it once) and note its Key ID
    and the Issuer ID shown on that page.
-4. **Make an empty private git repo** for your signing certificates (fastlane `match` stores
-   them there, encrypted) and pick a password for it.
+4. **Find your Team ID**: developer.apple.com → Account → Membership details (10 characters).
 5. **Store the secrets outside any repo** — put the `.p8` in `~/.appstoreconnect/` and add to
    `~/.zshrc`:
 
@@ -148,14 +147,17 @@ done by the agents.
    export APP_STORE_CONNECT_API_KEY_KEY_ID=XXXXXXXXXX
    export APP_STORE_CONNECT_API_KEY_ISSUER_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
    export APP_STORE_CONNECT_API_KEY_KEY_FILEPATH=~/.appstoreconnect/AuthKey_XXXXXXXXXX.p8
-   export MATCH_GIT_URL=git@github.com:you/certificates.git
-   export MATCH_PASSWORD='your-match-password'
+   export APPLE_TEAM_ID=XXXXXXXXXX
    ```
+
+   Signing is handled by Xcode automatic signing using this key: no certificates repo, no
+   profiles to manage, and nothing to click in Xcode.
 
 ### Once per app
 
 1. **Register the bundle ID** (developer.apple.com → Certificates, Identifiers & Profiles →
-   Identifiers), using the one agreed at GATE 1, e.g. `com.yourname.appname`.
+   Identifiers), using the one agreed at GATE 1, e.g. `com.yourname.appname`. App Store Connect
+   needs it to exist before you can create the app record in the next step.
 2. **Create the app record** in App Store Connect (Apps → + → New App: name, primary language,
    that bundle ID, any SKU). Apple's API doesn't allow this with a key.
 3. **Host two web pages**: a privacy policy and a support page. They must be live URLs; the
@@ -181,8 +183,8 @@ done by the agents.
 
 ### What runs without you
 
-Research, PRD, design, icon, architecture, code, tests, review, QA, signing certificates and
-profiles, build numbers, archiving, TestFlight upload and testers, screenshots, store text in
+Research, PRD, design, icon, architecture, code, tests, review, QA, signing (Xcode automatic
+signing), build numbers, archiving, TestFlight upload and testers, screenshots, store text in
 every language, age rating, export-compliance answers, submission for review, and release after
 approval — all driven by the agents, with uploads waiting for your GATE 2 confirmation.
 

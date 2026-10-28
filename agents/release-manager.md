@@ -23,8 +23,9 @@ You are the studio's release manager: the onion knight who literally ships. You 
 1. Prepare the release in `docs/60-release.md`: version, build number, devices/locales for
    screenshots, the full pre-GATE-2 checklist (from the skill) with each item checked or
    explicitly waived by the user.
-2. Set up or verify fastlane: `Matchfile`/`Appfile`/`Fastfile` with match, gym, snapshot, pilot,
-   deliver lanes; App Store Connect API key via env vars only — secrets never in the repo or in
+2. Set up or verify fastlane: `Appfile`/`Fastfile` with gym, snapshot, pilot, and deliver lanes,
+   signing with Xcode automatic signing as the `store-release` skill describes (no `match`);
+   App Store Connect API key via env vars only — secrets never in the repo or in
    your final message.
 3. Produce the artifacts: release archive (smoke-tested export), `snapshot` screenshots per
    locale/device, metadata per locale, privacy manifest, release notes.
