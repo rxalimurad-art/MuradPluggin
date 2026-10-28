@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Studio Dashboard</title>
+<style>
+  :root {
+    --bg: #f6f6f4; --panel: #ffffff; --ink: #1c1c1e; --muted: #6b6b70; --line: #e4e4e0;
+    --accent: #0a7aff; --ok: #1f9d55; --warn: #c27c0e; --bad: #d1352b; --chip: #efefec;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #111113; --panel: #1b1b1e; --ink: #ececee; --muted: #9a9aa0; --line: #2c2c31;
+      --accent: #3d95ff; --ok: #3fbf72; --warn: #e0a033; --bad: #ff5f55; --chip: #26262b; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-size: 14px; line-height: 1.45; }
+  header { padding: 20px 24px 8px; display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: baseline; }
+  h1 { font-size: 20px; margin: 0; }
+  h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 10px; }
+  .meta { color: var(--muted); font-size: 12px; }
+  main { padding: 8px 24px 32px; display: grid; gap: 16px; grid-template-columns: 1fr 320px; }
+  @media (max-width: 960px) { main { grid-template-columns: 1fr; padding: 8px 16px 24px; } header { padding: 16px 16px 8px; } }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; min-width: 0; }
+  .full { grid-column: 1 / -1; }
+  .wedge { margin: 6px 0 0; font-size: 15px; }
+
+  .pipeline { display: flex; align-items: stretch; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+  .stage { flex: 1 0 104px; border: 1px solid var(--line); border-radius: 10px; padding: 10px; }
+  .stage .n { font-size: 11px; color: var(--muted); }
+  .stage .t { font-weight: 600; }
+  .stage .o { font-size: 11px; color: var(--muted); }
+  .stage.done { border-color: color-mix(in srgb, var(--ok) 50%, var(--line)); background: color-mix(in srgb, var(--ok) 8%, transparent); }
+  .stage.active { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); }
+  .gate { flex: 0 0 auto; writing-mode: vertical-rl; transform: rotate(180deg); font-size: 11px; font-weight: 600;
+    border-radius: 8px; padding: 8px 4px; text-align: center; background: var(--chip); color: var(--muted); }
+  .gate.approved { background: color-mix(in srgb, var(--ok) 18%, transparent); color: var(--ok); }
+  .gate.waiting { background: color-mix(in srgb, var(--warn) 20%, transparent); color: var(--warn); }
+
+  .board { display: grid; grid-template-columns: repeat(6, minmax(150px, 1fr)); gap: 10px; overflow-x: auto; }
+  .col { background: var(--bg); border-radius: 10px; padding: 8px; min-height: 80px; }
+  .col h3 { margin: 2px 4px 8px; font-size: 12px; display: flex; justify-content: space-between; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 8px; margin-bottom: 8px; }
+  .card .id { font-size: 11px; font-family: ui-monospace, Menlo, monospace; color: var(--muted); }
+  .card .ti { font-weight: 500; margin: 2px 0 4px; }
+  .card .sm { font-size: 11px; color: var(--muted); overflow-wrap: anywhere; }
+  .col.blocked h3 { color: var(--bad); } .col.done h3 { color: var(--ok); } .col.in-progress h3 { color: var(--accent); }
+
+  .bar { display: flex; height: 8px; border-radius: 4px; overflow: hidden; background: var(--chip); margin-bottom: 14px; }
+  .bar span { display: block; }
+  ul.plain { list-style: none; padding: 0; margin: 0; }
+  ul.plain li { padding: 6px 0; border-bottom: 1px solid var(--line); }
+  ul.plain li:last-child { border-bottom: 0; }
+  .sev { font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 1px 6px; border-radius: 4px; margin-right: 6px; background: var(--chip); }
+  .sev.blocker { background: var(--bad); color: #fff; } .sev.major { background: var(--warn); color: #fff; }
+  .doc { cursor: pointer; display: flex; justify-content: space-between; gap: 8px; }
+  .doc:hover { color: var(--accent); }
+  .empty { color: var(--muted); font-style: italic; }
+  .src { font-size: 11px; color: var(--muted); font-family: ui-monospace, Menlo, monospace; }
+
+  dialog { width: min(860px, 94vw); max-height: 86vh; border: 1px solid var(--line); border-radius: 14px; padding: 0;
+    background: var(--panel); color: var(--ink); }
+  dialog::backdrop { background: rgba(0,0,0,.4); }
+  .dlg-head { position: sticky; top: 0; background: var(--panel); display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 18px; border-bottom: 1px solid var(--line); }
+  .dlg-head button { border: 0; background: var(--chip); color: var(--ink); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+  .md { padding: 4px 22px 22px; overflow-wrap: anywhere; }
+  .md table { border-collapse: collapse; display: block; overflow-x: auto; font-size: 13px; }
+  .md th, .md td { border: 1px solid var(--line); padding: 4px 8px; text-align: left; vertical-align: top; }
+  .md pre { background: var(--bg); padding: 10px; border-radius: 8px; overflow-x: auto; }
+  .md code { font-family: ui-monospace, Menlo, monospace; font-size: 12px; }
+  .md a { color: var(--accent); }
+  .welcome { text-align: center; padding: 48px 16px; }
+  .welcome code { background: var(--chip); padding: 2px 6px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<header>
+  <h1 id="title">Murad iOS Studio</h1>
+  <span class="meta" id="project"></span>
+  <span class="meta" id="updated"></span>
+</header>
+<main id="app"></main>
+
+<dialog id="viewer">
+  <div class="dlg-head"><strong id="viewer-title"></strong><button onclick="viewer.close()">Close</button></div>
+  <div class="md" id="viewer-body"></div>
+</dialog>
+
+<script>
+const STATUSES = ['blocked', 'ready', 'in-progress', 'in-review', 'qa', 'done'];
+const COLORS = { blocked: 'var(--bad)', ready: 'var(--muted)', 'in-progress': 'var(--accent)', 'in-review': 'var(--warn)', qa: '#8e5bd9', done: 'var(--ok)' };
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const ago = (ms) => { const s = (Date.now() - ms) / 1000; return s < 60 ? 'just now' : s < 3600 ? `${Math.round(s / 60)}m ago` : s < 86400 ? `${Math.round(s / 3600)}h ago` : `${Math.round(s / 86400)}d ago`; };
+
+// Small Markdown renderer: headings, lists, tables, code fences, quotes, inline code/bold/italic/links.
+function md(src) {
+  const inline = (t) => esc(t)
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/(^|[^*])\*([^*\s][^*]*)\*/g, '$1<em>$2</em>')
+    .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  const lines = src.split('\n'); let out = ''; let i = 0;
+  while (i < lines.length) {
+    const l = lines[i];
+    if (/^```/.test(l)) { let b = ''; i++; while (i < lines.length && !/^```/.test(lines[i])) b += esc(lines[i++]) + '\n'; out += `<pre><code>${b}</code></pre>`; i++; continue; }
+    const h = /^(#{1,6})\s+(.*)/.exec(l); if (h) { out += `<h${h[1].length}>${inline(h[2])}</h${h[1].length}>`; i++; continue; }
+    if (/^\s*\|/.test(l) && /^\s*\|?\s*:?-{3,}/.test(lines[i + 1] || '')) {
+      const cells = (r) => r.trim().replace(/^\||\|$/g, '').split('|');
+      out += '<table><tr>' + cells(l).map((c) => `<th>${inline(c.trim())}</th>`).join('') + '</tr>'; i += 2;
+      while (i < lines.length && /^\s*\|/.test(lines[i])) out += '<tr>' + cells(lines[i++]).map((c) => `<td>${inline(c.trim())}</td>`).join('') + '</tr>';
+      out += '</table>'; continue;
+    }
+    if (/^\s*([-*]|\d+\.)\s+/.test(l)) {
+      const ordered = /^\s*\d+\./.test(l); out += ordered ? '<ol>' : '<ul>';
+      while (i < lines.length && /^\s*([-*]|\d+\.)\s+/.test(lines[i])) out += `<li>${inline(lines[i++].replace(/^\s*([-*]|\d+\.)\s+/, ''))}</li>`;
+      out += ordered ? '</ol>' : '</ul>'; continue;
+    }
+    if (/^>\s?/.test(l)) { let q = ''; while (i < lines.length && /^>\s?/.test(lines[i])) q += lines[i++].replace(/^>\s?/, '') + ' '; out += `<blockquote>${inline(q)}</blockquote>`; continue; }
+    if (/^-{3,}\s*$/.test(l)) { out += '<hr>'; i++; continue; }
+    if (!l.trim()) { i++; continue; }
+    let p = ''; while (i < lines.length && lines[i].trim() && !/^(#|```|\s*\||\s*([-*]|\d+\.)\s|>)/.test(lines[i])) p += lines[i++] + ' ';
+    out += `<p>${inline(p)}</p>`;
+  }
+  return out;
+}
+
+async function openDoc(name) {
+  const text = await fetch(`/api/doc?name=${encodeURIComponent(name)}`).then((r) => r.text());
+  document.getElementById('viewer-title').textContent = name;
+  document.getElementById('viewer-body').innerHTML = md(text);
+  viewer.showModal();
+}
+
+function render(s) {
+  document.getElementById('project').textContent = s.project;
+  document.getElementById('updated').textContent = s.updated ? `docs updated ${ago(s.updated)}` : '';
+  const app = document.getElementById('app');
+  if (!s.hasDocs) {
+    app.innerHTML = `<section class="panel full welcome"><h2>No studio project here yet</h2>
+      <p>No <code>docs/</code> folder in this directory. Start one with</p>
+      <p><code>/murad-ios-studio:app-run &lt;one-line app idea&gt;</code></p></section>`;
+    return;
+  }
+  if (s.vision) document.getElementById('title').textContent = s.vision.title;
+
+  const gate = (label, st) => `<div class="gate ${st}" title="${label}: ${st}">${label} · ${st}</div>`;
+  const stage = (x) => `<div class="stage ${x.status}"><div class="n">Stage ${x.id} · ${x.status}</div><div class="t">${esc(x.name)}</div><div class="o">${esc(x.owner)}</div></div>`;
+  const pipeline = s.stages.slice(0, 5).map(stage).join('') + gate('Gate 1 scope-lock', s.gates.scopeLock)
+    + s.stages.slice(5).map(stage).join('') + gate('Gate 2 ship', s.gates.ship);
+
+  let board = '<p class="empty">No board yet — it appears after GATE 1 (scope-lock) is approved.</p>';
+  if (s.board) {
+    const total = s.board.tickets.length || 1;
+    const bar = STATUSES.map((st) => `<span style="width:${(s.board.counts[st] || 0) / total * 100}%;background:${COLORS[st]}" title="${st}: ${s.board.counts[st] || 0}"></span>`).join('');
+    const cols = STATUSES.map((st) => {
+      const cards = s.board.tickets.filter((t) => t.status === st).map((t) => `<div class="card">
+        <div class="id">${esc(t.id)}</div><div class="ti">${esc(t.title)}</div>
+        <div class="sm">${esc(t.owner)}${t.dependsOn && t.dependsOn !== '—' ? ` · after ${esc(t.dependsOn)}` : ''}</div>
+        ${t.verification ? `<div class="sm" style="margin-top:4px">✓ ${esc(t.verification)}</div>` : ''}</div>`).join('');
+      return `<div class="col ${st}"><h3><span>${st}</span><span>${s.board.counts[st] || 0}</span></h3>${cards}</div>`;
+    }).join('');
+    const done = s.board.counts.done || 0;
+    board = `<p class="meta" style="margin-top:-4px">${done} of ${s.board.tickets.length} tickets done</p><div class="bar">${bar}</div><div class="board">${cols}</div>`;
+  }
+
+  const open = (s.bugs || []).filter((b) => !/closed|fixed|resolved|done|wontfix/.test(b.status));
+  const rank = { blocker: 0, major: 1, minor: 2 };
+  open.sort((a, b) => (rank[a.severity] ?? 3) - (rank[b.severity] ?? 3));
+  const bugs = s.bugs == null ? '<p class="empty">No bug log yet.</p>' : open.length
+    ? `<ul class="plain">${open.map((b) => `<li><span class="sev ${b.severity}">${esc(b.severity || '?')}</span>${esc(b.id)} ${esc(b.title)}</li>`).join('')}</ul>`
+    : '<p class="empty">No open bugs.</p>';
+  const blockers = s.blockers.length
+    ? `<ul class="plain">${s.blockers.map((b) => `<li>${esc(b.text)}<div class="src">${esc(b.doc)}</div></li>`).join('')}</ul>`
+    : '<p class="empty">Nothing flagged for you.</p>';
+  const docs = `<ul class="plain">${s.docs.map((d) => `<li class="doc" onclick="openDoc('${esc(d.name)}')"><span>${esc(d.name)}</span><span class="meta">${ago(d.mtime)}</span></li>`).join('')}</ul>`;
+
+  app.innerHTML = `
+    ${s.vision?.wedge ? `<section class="panel full"><h2>The wedge</h2><div class="wedge">${md(s.vision.wedge)}</div></section>` : ''}
+    <section class="panel full"><h2>Pipeline</h2><div class="pipeline">${pipeline}</div></section>
+    <section class="panel"><h2>Board</h2>${board}</section>
+    <div style="display:grid;gap:16px;align-content:start;min-width:0">
+      <section class="panel"><h2>Open bugs</h2>${bugs}</section>
+      <section class="panel"><h2>Blockers</h2>${blockers}</section>
+      <section class="panel"><h2>Docs</h2>${docs}</section>
+    </div>`;
+}
+
+let last = '';
+async function tick() {
+  try {
+    const text = await fetch('/api/state').then((r) => r.text());
+    if (text !== last) { last = text; render(JSON.parse(text)); }
+  } catch { document.getElementById('updated').textContent = 'dashboard server not reachable'; }
+}
+tick(); setInterval(tick, 3000);
+</script>
+</body>
+</html>

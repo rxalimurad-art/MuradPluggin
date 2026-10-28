@@ -72,7 +72,7 @@ codex plugin add murad-ios-studio
 ### Gemini CLI
 
 This repo is also a valid Gemini CLI extension (`gemini-extension.json`), with the same six
-pipeline stages exposed both as skills and as `/`-style TOML commands under `commands/*.toml`
+pipeline stages (plus `app-dashboard`) exposed both as skills and as `/`-style TOML commands under `commands/*.toml`
 (`/app-run`, `/app-init`, …).
 
 ```
@@ -109,7 +109,22 @@ Or drive the stages manually:
 /murad-ios-studio:app-build           # loop: developers → reviewer → QA until board is done
 /murad-ios-studio:app-status          # standup: board state, blockers, next steps
 /murad-ios-studio:app-ship [version]  # release assets → TestFlight → (gate) → App Store
+/murad-ios-studio:app-dashboard [port] # live web dashboard of the project (default :4777)
 ```
+
+## Dashboard
+
+`/murad-ios-studio:app-dashboard` starts a small local server (`dashboard/server.mjs`, Node only,
+no dependencies) and gives you `http://localhost:4777`. Keep it open while the pipeline runs: it
+re-reads your project's `docs/` every few seconds and shows
+
+- the 8 stages and both gates, with what's done, active, or waiting on you
+- the ticket board from `docs/30-board.md` as columns by status, with each ticket's evidence
+- open bugs from `docs/51-bugs.md` (blockers first) and every blocker agents flagged for you
+- every doc, rendered in a viewer
+
+It's read-only — it never writes to `docs/`. You can also run it directly from a project folder:
+`node <plugin-root>/dashboard/server.mjs . --port 4777`.
 
 ## The team
 

@@ -1,0 +1,2 @@
+description = "Dashboard — opens a live local web page showing the project's pipeline stage, gates, ticket board, open bugs, blockers, and docs"
+prompt = "Read commands/app-dashboard.md in this extension's own directory (murad-ios-studio) and follow it exactly. The plugin root is this extension's directory.\n\nUser's input: {{args}}"
