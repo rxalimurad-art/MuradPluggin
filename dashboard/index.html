@@ -116,6 +116,7 @@ function describe(e) {
     case 'verify': return `${e.ticket || ''} ${e.kind} ${e.result}`;
     case 'review': return `${e.ticket} review: ${e.verdict}`;
     case 'qa': return `${e.ticket} QA: ${e.verdict}${e.bugs ? `, ${e.bugs} bug(s)` : ''}`;
+    case 'heal': return `${e.ticket ? `${e.ticket} ` : ''}self-heal [${e.class}] ${e.action || ''} → ${e.outcome}`;
     case 'blocker': return `Blocker${e.ticket ? ` on ${e.ticket}` : ''}: ${e.text}`;
     default: return e.event;
   }
@@ -213,11 +214,12 @@ function render(s) {
       <div class="kpi"><div class="v">${m.reworkLoops}</div><div class="l">Rework loops (review changes + QA fails)</div></div>
       <div class="kpi"><div class="v">${rate(m.builds)}</div><div class="l">Builds passed</div></div>
       <div class="kpi"><div class="v">${rate(m.tests)}</div><div class="l">Test runs passed</div></div>
+      <div class="kpi" title="${esc(Object.entries(m.heals.byClass).map(([k, v]) => `${k}: ${v}`).join(', '))}"><div class="v">${m.heals.recovered}/${m.heals.recovered + m.heals.failed + m.heals.escalated}</div><div class="l">Self-heals recovered${m.heals.escalated ? ` · ${m.heals.escalated} escalated` : ''}</div></div>
     </div>
-    ${m.tickets.length ? `<div class="table-wrap"><table class="metrics"><tr><th>Ticket</th><th class="num">Cycle time</th><th class="num">Reviews</th><th class="num">Changes asked</th><th class="num">QA fails</th><th class="num">Build fails</th><th class="num">Test fails</th></tr>
-      ${m.tickets.map((t) => `<tr><td>${esc(t.id)}${t.finished ? '' : ' <span class="meta">(open)</span>'}</td><td class="num">${dur(t.cycleSeconds)}</td><td class="num">${t.reviews}</td>
+    ${m.tickets.length ? `<div class="table-wrap"><table class="metrics"><tr><th>Ticket</th><th class="num">Cycle time</th><th class="num">Reviews</th><th class="num">Changes asked</th><th class="num">QA fails</th><th class="num">Build fails</th><th class="num">Test fails</th><th class="num">Heals</th></tr>
+      ${m.tickets.map((t) => `<tr><td>${esc(t.id)}${t.stuck ? ' <span class="sev blocker">stuck</span>' : t.finished ? '' : ' <span class="meta">(open)</span>'}</td><td class="num">${dur(t.cycleSeconds)}</td><td class="num">${t.reviews}</td>
         <td class="num ${t.changes >= 2 ? 'hot' : ''}">${t.changes}</td><td class="num ${t.qaFails >= 2 ? 'hot' : ''}">${t.qaFails}</td>
-        <td class="num">${t.buildFails}</td><td class="num">${t.testFails}</td></tr>`).join('')}</table></div>` : ''}
+        <td class="num">${t.buildFails}</td><td class="num">${t.testFails}</td><td class="num">${t.heals}</td></tr>`).join('')}</table></div>` : ''}
   </section>`;
   const activity = !m ? '' : `<section class="panel"><h2>Activity</h2><ul class="plain">${m.recent.map((e) =>
     `<li class="ev"><span class="src">${esc(new Date(e.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }))}</span>${esc(describe(e))}</li>`).join('')}</ul></section>`;

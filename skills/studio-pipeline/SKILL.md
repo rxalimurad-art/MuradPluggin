@@ -79,9 +79,66 @@ printf '%s\n' "{\"ts\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"event\":\"ticket\",\
 | `review` | `code-reviewer`, with its verdict | `ticket`, `verdict` (`approved`/`changes`) |
 | `qa` | `qa-engineer`, after testing a ticket | `ticket`, `verdict` (`pass`/`fail`), `bugs` (count filed) |
 | `blocker` | anyone who stops the line | `ticket` (if any), `text` |
+| `heal` | whoever runs a recovery (see Self-healing) | `ticket`, `class`, `action`, `outcome` (`recovered`/`failed`/`escalated`) |
 
 Emit the event in the same step as the change it records. A missed event only blurs the metrics;
 it never blocks work, so do not stop the pipeline over telemetry.
+
+## Self-healing
+
+When something fails, diagnose before you retry. Never repeat the same action unchanged after it
+has failed twice — the second identical failure means the approach is wrong, not unlucky.
+
+### 1. Classify the failure
+
+Match the failure to one class and run that class's recovery. The budget is how many recovery
+attempts the class gets per ticket before it escalates.
+
+| Class | Signal | Recovery | Budget | Then |
+| --- | --- | --- | --- | --- |
+| `env-simulator` | simulator won't boot, install/launch hangs, "Unable to boot" | `xcrun simctl shutdown all`, erase the target device (`xcrun simctl erase <udid>`), retry on it | 2 | blocker |
+| `env-tooling` | MobileBuildMCP missing, erroring, or timing out | switch to the `xcodebuild` fallback in `verify-loop` for the rest of the ticket | 1 | blocker |
+| `env-cache` | errors in files the ticket didn't touch, "could not build module", stale module cache | delete this project's DerivedData folder, resolve packages, rebuild | 1 | `compile` |
+| `dependency` | Swift package resolution fails | `xcodebuild -resolvePackageDependencies`, check `Package.resolved` and the network | 2 | blocker |
+| `compile` | build errors in the ticket's own code | developer fixes the code | 3 | `ios-architect` |
+| `test-flaky` | a test fails, then passes on an unchanged rerun | file a minor bug "flaky: <test name>" in `docs/51-bugs.md`; if it is one of this ticket's own acceptance tests, fix it now | 1 | `test-real` |
+| `test-real` | a test fails twice on unchanged code | developer fixes the code, never the assertion | 3 | `ios-architect` |
+| `review-loop` | the reviewer raises the same finding a second time | send the finding and both diffs to `ios-architect` to arbitrate; record the ruling as an ADR in `docs/20-architecture.md` | 1 | user |
+| `qa-regression` | QA fails a ticket on a bug it already filed once | developer adds the bug's repro as an automated test first, then fixes it | 1 | `ios-architect` |
+| `stuck` | see the health check below | re-read the row; split an oversized ticket into `APP-NNa`/`APP-NNb` on the board, or re-dispatch with the blocker made explicit | 1 | user |
+| `interrupted` | a ticket sits in `in-progress`/`in-review`/`qa` when a new build run starts | resume it at that status; for `in-progress`, re-run the full verify loop before anything else | 1 | `stuck` |
+| `spec-gap` | the docs don't define the correct behavior | none — apply the ambiguity rule | 0 | user |
+| `release` | signing, provisioning, credentials, App Store Connect | none — never auto-heal | 0 | user |
+
+"Escalate to `ios-architect`" means: dispatch it with the error output, the ticket row, and the
+diff; it diagnoses the root cause (and amends `docs/20-architecture.md` if the design is at fault),
+then the developer retries with that diagnosis. "Blocker" and "user" mean: write the blocker
+into the board row and stop that ticket per the ambiguity rule.
+
+### 2. Health check (every build round)
+
+Before dispatching a round, the main agent reads `docs/90-telemetry.jsonl` and the board, and
+treats a ticket as `stuck` when any of these holds:
+
+- 2 or more rework loops (review `changes` + QA `fail`) so far;
+- 3 or more `verify` failures in a row with no pass in between;
+- it was in flight for a whole round without a single new event.
+
+Run the `stuck` recovery on those tickets before starting new ones.
+
+### 3. Guardrails
+
+Healing never: edits a test's assertions or deletes a test, loosens a build setting or silences
+a warning to get green, touches signing or credentials, rewrites git history, or deletes anything
+outside this project except its own DerivedData folder and simulator state. Every recovery is
+followed by the full verify loop — a heal is only real once the commands exit zero. The
+three-failed-loops stop in `app-build` remains the hard limit above all class budgets.
+
+### 4. Record it
+
+Log a `heal` telemetry event for every recovery attempt (`ticket`, `class`, `action`, and
+`outcome`: `recovered`/`failed`/`escalated`), and mention recoveries in the round's standup so the
+user sees what fixed itself.
 
 ## Ambiguity rule
 

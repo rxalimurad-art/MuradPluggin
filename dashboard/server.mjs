@@ -149,8 +149,9 @@ async function telemetry() {
   for (const e of events.filter((e) => e.event === 'gate')) gates[e.gate] = e.decision;
 
   const tickets = {};
-  const tk = (id) => (tickets[id] ??= { id, start: null, done: null, reviews: 0, changes: 0, qaFails: 0, buildFails: 0, testFails: 0 });
+  const tk = (id) => (tickets[id] ??= { id, start: null, done: null, reviews: 0, changes: 0, qaFails: 0, buildFails: 0, testFails: 0, failStreak: 0, heals: 0 });
   let builds = { pass: 0, fail: 0 }, tests = { pass: 0, fail: 0 };
+  const heals = { recovered: 0, failed: 0, escalated: 0, byClass: {} };
   for (const e of events) {
     if (e.event === 'ticket' && e.ticket) {
       const x = tk(e.ticket);
@@ -165,11 +166,18 @@ async function telemetry() {
       const bucket = e.kind === 'test' ? tests : builds;
       e.result === 'pass' ? bucket.pass++ : bucket.fail++;
       if (e.ticket && e.result !== 'pass') tk(e.ticket)[e.kind === 'test' ? 'testFails' : 'buildFails']++;
+      if (e.ticket) tk(e.ticket).failStreak = e.result === 'pass' ? 0 : tk(e.ticket).failStreak + 1;
+    } else if (e.event === 'heal') {
+      if (e.outcome in heals) heals[e.outcome]++;
+      if (e.class) heals.byClass[e.class] = (heals.byClass[e.class] || 0) + 1;
+      if (e.ticket) tk(e.ticket).heals++;
     }
   }
   const list = Object.values(tickets).map((x) => ({
     ...x, cycleSeconds: x.start && x.done ? (x.done - x.start) / 1000 : x.start ? (Date.now() - x.start) / 1000 : null,
     finished: !!x.done, loops: x.changes + x.qaFails,
+    // Mirrors the health check in Self-healing (skills/studio-pipeline/SKILL.md).
+    stuck: !x.done && (x.changes + x.qaFails >= 2 || x.failStreak >= 3),
   })).sort((a, b) => a.id.localeCompare(b.id, undefined, { numeric: true }));
   const finished = list.filter((x) => x.finished && x.cycleSeconds != null);
   const reviewed = list.filter((x) => x.reviews);
@@ -179,7 +187,7 @@ async function telemetry() {
     avgCycleSeconds: finished.length ? finished.reduce((n, x) => n + x.cycleSeconds, 0) / finished.length : null,
     firstPassReview: reviewed.length ? reviewed.filter((x) => x.firstReviewApproved).length / reviewed.length : null,
     reworkLoops: list.reduce((n, x) => n + x.loops, 0),
-    builds, tests, stages, gates, tickets: list,
+    builds, tests, heals, stages, gates, tickets: list,
     recent: events.slice(-25).reverse(),
   };
 }

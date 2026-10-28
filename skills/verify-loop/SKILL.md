@@ -40,3 +40,6 @@ Same rule: exit code zero, and quote any failing test names.
 - A red build/test is a blocker: fix, re-run the full loop, and only then continue.
 - Flaky failures must be re-run once; a second failure is treated as real.
 - Never weaken a test, delete an assertion, or loosen a build setting to get green. Fix the code.
+- When a step fails, classify the failure and run that class's recovery before retrying
+  (see Self-healing in the `studio-pipeline` skill). Environment failures (simulator, MobileBuildMCP, stale
+  caches, package resolution) have their own recoveries — don't spend code fixes on them.

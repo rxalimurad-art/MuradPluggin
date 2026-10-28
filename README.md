@@ -157,6 +157,11 @@ Dispatched as a subagent on Claude Code/Kimi Code, run in-thread as a skill on C
   `50-test-plan`, `51-bugs`, `60-release`). Every agent reads them before acting.
 - **Nothing is "done" on an agent's say-so.** A ticket moves to review only after the
   build compiles and tests exit zero on a real simulator run.
+- **It heals before it retries.** Every failure is classified (simulator, MobileBuildMCP, stale
+  caches, packages, compile, flaky vs. real test, repeated review finding, stuck or interrupted
+  ticket) and gets its own recovery with a retry budget, escalating to the architect or to you
+  instead of looping. Signing and App Store Connect problems are never auto-healed. Rules are in
+  the `studio-pipeline` skill; every recovery shows up on the dashboard.
 - **Ambiguity stops the line.** Agents write blockers into the board/standup and ask you
   instead of guessing.
 

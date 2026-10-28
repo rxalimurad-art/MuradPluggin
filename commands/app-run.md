@@ -46,6 +46,10 @@ Repeat until every ticket is `done` or the loop is blocked:
    recorded on its row.
 5. After each round, give the user a 5-line standup: done / in-flight / blocked / next.
 
+Self-heal as you go per the contract's Self-healing section: run the health check before each
+round, resume interrupted tickets, follow each failure class's recovery and budget, and escalate
+`REPEAT` findings to `ios-architect`. Include what self-healed in each standup.
+
 If every remaining ticket is blocked or a ticket has failed three loops, stop and ask the user.
 
 ## 5. Release + GATE 2
