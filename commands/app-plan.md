@@ -15,4 +15,6 @@ Invoke the `studio-pipeline` skill. Build the board from the existing docs — d
 4. Present the board to the user: total tickets, the first ready batch, and the dependency
    chain in one glance (a compact list is fine).
 
+Log `stage_start`/`stage_end` for stage 6 (see Telemetry in the `studio-pipeline` skill).
+
 Next step when ready: `/murad-ios-studio:app-build`.

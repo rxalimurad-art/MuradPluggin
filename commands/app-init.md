@@ -17,6 +17,8 @@ Steps:
 
 Then execute GATE 1 from the contract: summarize the plan (differentiated idea in 2 sentences,
 MVP Must list, module map, top risk) and ask the user to approve or revise. Write no code.
+Log `stage_start`/`stage_end` telemetry around each stage and a `gate` event with the user's
+answer (see Telemetry in the `studio-pipeline` skill).
 
 Report what was created (the doc list) and the gate outcome. If the user approves, suggest
 `/murad-ios-studio:app-plan` next.

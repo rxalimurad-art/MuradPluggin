@@ -123,6 +123,15 @@ re-reads your project's `docs/` every few seconds and shows
 - open bugs from `docs/51-bugs.md` (blockers first) and every blocker agents flagged for you
 - every doc, rendered in a viewer
 
+- run metrics from `docs/90-telemetry.jsonl`: time per stage, cycle time per ticket, first-pass
+  review rate, rework loops, build/test pass rates, and a live activity feed
+
+**Telemetry is local only.** Agents append one JSON line per event (stage start/end, gate
+decisions, ticket moves, build/test results, review and QA verdicts) to `docs/90-telemetry.jsonl`
+in your project; the format is in the `studio-pipeline` skill. Nothing is sent anywhere. When the
+log has gate decisions, the dashboard uses them instead of guessing gate state from which docs
+exist.
+
 It's read-only — it never writes to `docs/`. You can also run it directly from a project folder:
 `node <plugin-root>/dashboard/server.mjs . --port 4777`.
 

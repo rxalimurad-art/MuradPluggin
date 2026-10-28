@@ -71,6 +71,18 @@
   .md pre { background: var(--bg); padding: 10px; border-radius: 8px; overflow-x: auto; }
   .md code { font-family: ui-monospace, Menlo, monospace; font-size: 12px; }
   .md a { color: var(--accent); }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 14px; }
+  .kpi { background: var(--bg); border-radius: 10px; padding: 10px 12px; }
+  .kpi .v { font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .kpi .l { font-size: 12px; color: var(--muted); }
+  table.metrics { border-collapse: collapse; width: 100%; font-size: 13px; font-variant-numeric: tabular-nums; }
+  .table-wrap { overflow-x: auto; }
+  table.metrics th { text-align: left; font-weight: 500; color: var(--muted); font-size: 12px; border-bottom: 1px solid var(--line); padding: 4px 8px; }
+  table.metrics td { border-bottom: 1px solid var(--line); padding: 5px 8px; }
+  table.metrics td.num, table.metrics th.num { text-align: right; }
+  .hot { color: var(--bad); font-weight: 600; }
+  .stage .d { font-size: 11px; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .ev { font-size: 12px; } .ev .src { display: inline; margin-right: 6px; }
   .welcome { text-align: center; padding: 48px 16px; }
   .welcome code { background: var(--chip); padding: 2px 6px; border-radius: 4px; }
 </style>
@@ -92,6 +104,22 @@
 const STATUSES = ['blocked', 'ready', 'in-progress', 'in-review', 'qa', 'done'];
 const COLORS = { blocked: 'var(--bad)', ready: 'var(--muted)', 'in-progress': 'var(--accent)', 'in-review': 'var(--warn)', qa: '#8e5bd9', done: 'var(--ok)' };
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const dur = (sec) => sec == null ? '—' : sec < 60 ? `${Math.round(sec)}s` : sec < 3600 ? `${Math.round(sec / 60)}m` : sec < 86400 ? `${(sec / 3600).toFixed(1)}h` : `${(sec / 86400).toFixed(1)}d`;
+const pct = (x) => x == null ? '—' : `${Math.round(x * 100)}%`;
+const rate = (b) => b.pass + b.fail ? `${b.pass}/${b.pass + b.fail}` : '—';
+function describe(e) {
+  switch (e.event) {
+    case 'stage_start': return `Stage ${e.stage} started`;
+    case 'stage_end': return `Stage ${e.stage} finished`;
+    case 'gate': return `${e.gate} gate: ${e.decision}`;
+    case 'ticket': return `${e.ticket} ${e.from || '?'} → ${e.to}${e.agent ? ` (${e.agent})` : ''}`;
+    case 'verify': return `${e.ticket || ''} ${e.kind} ${e.result}`;
+    case 'review': return `${e.ticket} review: ${e.verdict}`;
+    case 'qa': return `${e.ticket} QA: ${e.verdict}${e.bugs ? `, ${e.bugs} bug(s)` : ''}`;
+    case 'blocker': return `Blocker${e.ticket ? ` on ${e.ticket}` : ''}: ${e.text}`;
+    default: return e.event;
+  }
+}
 const ago = (ms) => { const s = (Date.now() - ms) / 1000; return s < 60 ? 'just now' : s < 3600 ? `${Math.round(s / 60)}m ago` : s < 86400 ? `${Math.round(s / 3600)}h ago` : `${Math.round(s / 86400)}d ago`; };
 
 // Small Markdown renderer: headings, lists, tables, code fences, quotes, inline code/bold/italic/links.
@@ -146,7 +174,7 @@ function render(s) {
   if (s.vision) document.getElementById('title').textContent = s.vision.title;
 
   const gate = (label, st) => `<div class="gate ${st}" title="${label}: ${st}">${label} · ${st}</div>`;
-  const stage = (x) => `<div class="stage ${x.status}"><div class="n">Stage ${x.id} · ${x.status}</div><div class="t">${esc(x.name)}</div><div class="o">${esc(x.owner)}</div></div>`;
+  const stage = (x) => `<div class="stage ${x.status}"><div class="n">Stage ${x.id} · ${x.status}</div><div class="t">${esc(x.name)}</div><div class="o">${esc(x.owner)}</div>${x.seconds != null ? `<div class="d">⏱ ${dur(x.seconds)}</div>` : ''}</div>`;
   const pipeline = s.stages.slice(0, 5).map(stage).join('') + gate('Gate 1 scope-lock', s.gates.scopeLock)
     + s.stages.slice(5).map(stage).join('') + gate('Gate 2 ship', s.gates.ship);
 
@@ -176,23 +204,43 @@ function render(s) {
     : '<p class="empty">Nothing flagged for you.</p>';
   const docs = `<ul class="plain">${s.docs.map((d) => `<li class="doc" onclick="openDoc('${esc(d.name)}')"><span>${esc(d.name)}</span><span class="meta">${ago(d.mtime)}</span></li>`).join('')}</ul>`;
 
+    const m = s.metrics;
+  const metrics = !m ? '' : `<section class="panel full"><h2>Run metrics</h2>
+    <div class="kpis">
+      <div class="kpi"><div class="v">${dur(m.elapsedSeconds)}</div><div class="l">Run time so far</div></div>
+      <div class="kpi"><div class="v">${dur(m.avgCycleSeconds)}</div><div class="l">Avg ticket cycle (in-progress → done)</div></div>
+      <div class="kpi"><div class="v">${pct(m.firstPassReview)}</div><div class="l">Tickets approved on first review</div></div>
+      <div class="kpi"><div class="v">${m.reworkLoops}</div><div class="l">Rework loops (review changes + QA fails)</div></div>
+      <div class="kpi"><div class="v">${rate(m.builds)}</div><div class="l">Builds passed</div></div>
+      <div class="kpi"><div class="v">${rate(m.tests)}</div><div class="l">Test runs passed</div></div>
+    </div>
+    ${m.tickets.length ? `<div class="table-wrap"><table class="metrics"><tr><th>Ticket</th><th class="num">Cycle time</th><th class="num">Reviews</th><th class="num">Changes asked</th><th class="num">QA fails</th><th class="num">Build fails</th><th class="num">Test fails</th></tr>
+      ${m.tickets.map((t) => `<tr><td>${esc(t.id)}${t.finished ? '' : ' <span class="meta">(open)</span>'}</td><td class="num">${dur(t.cycleSeconds)}</td><td class="num">${t.reviews}</td>
+        <td class="num ${t.changes >= 2 ? 'hot' : ''}">${t.changes}</td><td class="num ${t.qaFails >= 2 ? 'hot' : ''}">${t.qaFails}</td>
+        <td class="num">${t.buildFails}</td><td class="num">${t.testFails}</td></tr>`).join('')}</table></div>` : ''}
+  </section>`;
+  const activity = !m ? '' : `<section class="panel"><h2>Activity</h2><ul class="plain">${m.recent.map((e) =>
+    `<li class="ev"><span class="src">${esc(new Date(e.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }))}</span>${esc(describe(e))}</li>`).join('')}</ul></section>`;
+
   app.innerHTML = `
     ${s.vision?.wedge ? `<section class="panel full"><h2>The wedge</h2><div class="wedge">${md(s.vision.wedge)}</div></section>` : ''}
     <section class="panel full"><h2>Pipeline</h2><div class="pipeline">${pipeline}</div></section>
+    ${metrics}
     <section class="panel"><h2>Board</h2>${board}</section>
     <div style="display:grid;gap:16px;align-content:start;min-width:0">
       <section class="panel"><h2>Open bugs</h2>${bugs}</section>
       <section class="panel"><h2>Blockers</h2>${blockers}</section>
+      ${activity}
       <section class="panel"><h2>Docs</h2>${docs}</section>
     </div>`;
 }
 
 let last = '';
 async function tick() {
-  try {
-    const text = await fetch('/api/state').then((r) => r.text());
-    if (text !== last) { last = text; render(JSON.parse(text)); }
-  } catch { document.getElementById('updated').textContent = 'dashboard server not reachable'; }
+  let text;
+  try { text = await fetch('/api/state').then((r) => r.text()); }
+  catch { document.getElementById('updated').textContent = 'dashboard server not reachable'; return; }
+  if (text !== last) { last = text; render(JSON.parse(text)); }
 }
 tick(); setInterval(tick, 3000);
 </script>

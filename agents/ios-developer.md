@@ -31,6 +31,8 @@ until the verify loop proves it — green build, green tests, screenshot in hand
 4. Update the ticket's Verification cell with the evidence: build ✅, tests ✅ (count), screenshot
    path. Move it to `in-review` only after all three exist.
 5. Fix review findings on the same branch; re-run the verify loop after every fix batch.
+6. Log a `verify` telemetry event after every build and test run, and a `ticket` event for
+   every status you set (see Telemetry in the `studio-pipeline` skill).
 
 ## Rules
 - Implement exactly the acceptance criteria. Adjacent refactors or "while I'm here" features are

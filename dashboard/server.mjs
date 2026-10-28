@@ -127,6 +127,63 @@ function vision(md) {
   return { title: title.replace(/^Vision:\s*/i, ''), wedge: wedge?.trim() || '', success: success?.trim() || '' };
 }
 
+// Reads docs/90-telemetry.jsonl (format: Telemetry in skills/studio-pipeline/SKILL.md) into run metrics.
+async function telemetry() {
+  let raw;
+  try { raw = await readFile(join(docsDir, '90-telemetry.jsonl'), 'utf8'); } catch { return null; }
+  const events = raw.split('\n').map((l) => { try { return JSON.parse(l); } catch { return null; } })
+    .filter((e) => e && e.event && !Number.isNaN(Date.parse(e.ts)))
+    .sort((a, b) => Date.parse(a.ts) - Date.parse(b.ts));
+  if (!events.length) return null;
+  const t = (e) => Date.parse(e.ts);
+
+  const stages = {};
+  for (const e of events.filter((e) => e.event === 'stage_start' || e.event === 'stage_end')) {
+    const s = (stages[e.stage] ??= { seconds: 0, open: null });
+    if (e.event === 'stage_start') s.open ??= t(e);
+    else if (s.open != null) { s.seconds += (t(e) - s.open) / 1000; s.open = null; }
+  }
+  for (const s of Object.values(stages)) if (s.open != null) { s.seconds += (Date.now() - s.open) / 1000; s.running = true; }
+
+  const gates = {};
+  for (const e of events.filter((e) => e.event === 'gate')) gates[e.gate] = e.decision;
+
+  const tickets = {};
+  const tk = (id) => (tickets[id] ??= { id, start: null, done: null, reviews: 0, changes: 0, qaFails: 0, buildFails: 0, testFails: 0 });
+  let builds = { pass: 0, fail: 0 }, tests = { pass: 0, fail: 0 };
+  for (const e of events) {
+    if (e.event === 'ticket' && e.ticket) {
+      const x = tk(e.ticket);
+      if (e.to === 'in-progress') x.start ??= t(e);
+      if (e.to === 'done') x.done = t(e);
+    } else if (e.event === 'review' && e.ticket) {
+      const x = tk(e.ticket); x.reviews++; if (e.verdict === 'changes') x.changes++;
+      if (x.reviews === 1) x.firstReviewApproved = e.verdict === 'approved';
+    } else if (e.event === 'qa' && e.ticket) {
+      if (e.verdict === 'fail') tk(e.ticket).qaFails++;
+    } else if (e.event === 'verify') {
+      const bucket = e.kind === 'test' ? tests : builds;
+      e.result === 'pass' ? bucket.pass++ : bucket.fail++;
+      if (e.ticket && e.result !== 'pass') tk(e.ticket)[e.kind === 'test' ? 'testFails' : 'buildFails']++;
+    }
+  }
+  const list = Object.values(tickets).map((x) => ({
+    ...x, cycleSeconds: x.start && x.done ? (x.done - x.start) / 1000 : x.start ? (Date.now() - x.start) / 1000 : null,
+    finished: !!x.done, loops: x.changes + x.qaFails,
+  })).sort((a, b) => a.id.localeCompare(b.id, undefined, { numeric: true }));
+  const finished = list.filter((x) => x.finished && x.cycleSeconds != null);
+  const reviewed = list.filter((x) => x.reviews);
+
+  return {
+    elapsedSeconds: (t(events.at(-1)) - t(events[0])) / 1000,
+    avgCycleSeconds: finished.length ? finished.reduce((n, x) => n + x.cycleSeconds, 0) / finished.length : null,
+    firstPassReview: reviewed.length ? reviewed.filter((x) => x.firstReviewApproved).length / reviewed.length : null,
+    reworkLoops: list.reduce((n, x) => n + x.loops, 0),
+    builds, tests, stages, gates, tickets: list,
+    recent: events.slice(-25).reverse(),
+  };
+}
+
 async function state() {
   let files = [];
   try { files = (await readdir(docsDir)).filter((f) => f.endsWith('.md')).sort(); } catch {}
@@ -135,6 +192,7 @@ async function state() {
   const board = parseBoard(docs['30-board.md']);
   const bugs = parseBugs(docs['51-bugs.md']);
   const release = docs['60-release.md'] || '';
+  const metrics = await telemetry();
 
   const stages = STAGES.map((s) => {
     let status = s.docs.length && s.docs.every((d) => docs[d]) ? 'done' : s.docs.some((d) => docs[d]) ? 'active' : 'todo';
@@ -143,18 +201,24 @@ async function state() {
       status = total && board.counts.done === total ? 'done' : total ? 'active' : 'todo';
     }
     if (s.id === 8 && docs['60-release.md']) status = /submitted|uploaded|in review|testflight build/i.test(release) ? 'done' : 'active';
-    return { ...s, status };
+    const m = metrics?.stages[s.id];
+    if (m?.running && status !== 'done') status = 'active';
+    return { ...s, status, seconds: m ? m.seconds : null };
   });
   // GATE 1 is approved once a board exists (the board is only written after scope-lock).
-  const gate1 = stages[4].status === 'done' ? (docs['30-board.md'] ? 'approved' : 'waiting') : 'pending';
-  const gate2 = stages[7].status === 'done' ? 'approved' : stages[7].status === 'active' ? 'waiting' : 'pending';
+  let gate1 = stages[4].status === 'done' ? (docs['30-board.md'] ? 'approved' : 'waiting') : 'pending';
+  let gate2 = stages[7].status === 'done' ? 'approved' : stages[7].status === 'active' ? 'waiting' : 'pending';
+  // A logged gate decision beats the heuristics above.
+  const fromLog = (d, fallback) => (d === 'approved' ? 'approved' : d ? 'waiting' : fallback);
+  const gates = { scopeLock: fromLog(metrics?.gates['scope-lock'], gate1), ship: fromLog(metrics?.gates.ship, gate2) };
 
   return {
     project: projectDir,
     hasDocs: files.length > 0,
     vision: vision(docs['00-vision.md']),
     stages,
-    gates: { scopeLock: gate1, ship: gate2 },
+    gates,
+    metrics,
     board,
     bugs,
     blockers: findBlockers(docs),

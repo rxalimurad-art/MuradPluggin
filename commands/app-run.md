@@ -4,7 +4,9 @@ argument-hint: <one-line app idea>
 ---
 
 Run the Murad iOS Studio pipeline end to end. Start by invoking the `studio-pipeline` skill and
-following its contract exactly.
+following its contract exactly. Log telemetry as you go: `stage_start`/`stage_end` around every
+stage, a `gate` event after each gate answer, and `ticket` events for status changes you make
+(see Telemetry in the `studio-pipeline` skill).
 
 The idea: $ARGUMENTS
 

@@ -13,7 +13,8 @@ Invoke the `studio-pipeline` skill and run stage 7 of its contract. Optional tic
    b. When it reports evidence, dispatch `code-reviewer` on the branch.
    c. APPROVED → dispatch `qa-engineer`. SHIP-level pass → ticket `done`.
    d. CHANGES or QA blockers/majors → ticket back to `in-progress`; loop again.
-   e. Record everything on the board row: status, verdict, verification evidence.
+   e. Record everything on the board row: status, verdict, verification evidence, and log a
+      `ticket` telemetry event for each status change you make (see Telemetry in the `studio-pipeline` skill).
 4. A ticket that has failed three full loops stops the run — summarize and ask the user.
 5. Close with the standup: tickets done this run, current board counts, open bugs, next ready
    batch, and any blockers (verbatim from the agents — do not soften them).

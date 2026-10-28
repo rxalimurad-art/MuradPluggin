@@ -60,6 +60,29 @@ Verification cell:
 
 An agent's self-report is never sufficient — the commands must have exited zero.
 
+## Telemetry (`docs/90-telemetry.jsonl`)
+
+The studio keeps a local, append-only event log so the dashboard can show where time and rework
+go. It never leaves the machine. Append one JSON object per line, timestamped by the shell (never
+type the timestamp yourself), with this exact template:
+
+```
+printf '%s\n' "{\"ts\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"event\":\"ticket\",\"ticket\":\"APP-03\",\"from\":\"in-progress\",\"to\":\"in-review\",\"agent\":\"ios-developer\"}" >> docs/90-telemetry.jsonl
+```
+
+| Event | Emitted by | Extra fields |
+| --- | --- | --- |
+| `stage_start` / `stage_end` | main agent, around each stage 1–8 | `stage` (1–8) |
+| `gate` | main agent, after the user answers | `gate` (`scope-lock`/`ship`), `decision` (`approved`/`revise`/`declined`) |
+| `ticket` | whoever changes a board row's status | `ticket`, `from`, `to`, `agent` |
+| `verify` | `ios-developer`, after each build/test run | `ticket`, `kind` (`build`/`test`), `result` (`pass`/`fail`) |
+| `review` | `code-reviewer`, with its verdict | `ticket`, `verdict` (`approved`/`changes`) |
+| `qa` | `qa-engineer`, after testing a ticket | `ticket`, `verdict` (`pass`/`fail`), `bugs` (count filed) |
+| `blocker` | anyone who stops the line | `ticket` (if any), `text` |
+
+Emit the event in the same step as the change it records. A missed event only blurs the metrics;
+it never blocks work, so do not stop the pipeline over telemetry.
+
 ## Ambiguity rule
 
 When a requirement is ambiguous or a dependency is missing, do not guess. Write a blocker
