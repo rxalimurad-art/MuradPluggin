@@ -29,7 +29,8 @@ to make mid-sprint, and you record the reasoning so later changes can be judged 
    - **ADRs**: numbered decision records (format: Context / Decision / Consequences) for every
      choice someone could reasonably argue with — persistence tech, dependency additions,
      navigation approach, sync strategy if any.
-2. Define the git & CI strategy: branch model (trunk-based, feature branches + PR), version and
+2. Propose the bundle ID (`com.<owner>.<app>`) in the architecture doc; it's confirmed at GATE 1.
+   Then define the git & CI strategy: branch model (trunk-based, feature branches + PR), version and
    build-number scheme, and the CI pipeline (build + test on every push; archive on tags) —
      including which lane does what if fastlane is used.
 3. Size the backlog technically: note which APP-NN items carry structural risk and should be

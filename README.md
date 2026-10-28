@@ -17,6 +17,9 @@ idea → research → PRD → design → architecture → build → review/QA �
 - Optional, for the deploy stage: `brew install fastlane`
 - An Apple Developer account (paid) for TestFlight/App Store submission
 
+Building and testing need only the first line. To ship, also do the one-time setup in
+[What you need to do](#what-you-need-to-do).
+
 ## Install
 
 From the GitHub repo (Claude Code 2.1.275+, one step):
@@ -111,6 +114,77 @@ Or drive the stages manually:
 /murad-ios-studio:app-ship [version]  # release assets → TestFlight → (gate) → App Store
 /murad-ios-studio:app-dashboard [port] # live web dashboard of the project (default :4777)
 ```
+
+## What you need to do
+
+The studio automates the work in between, but a few things only you can do: Apple account
+setup, a handful of App Store Connect pages, and the two gates. Everything not listed here is
+done by the agents.
+
+### Once per Mac
+
+1. Install Xcode 16+ and sign in with your Apple ID (Xcode → Settings → Accounts).
+2. Install Node.js 18+ and fastlane: `brew install node fastlane`.
+3. Install the plugin (see [Install](#install)) and approve the `mobilebuildmcp` server the first
+   time it's used.
+
+### Once per Apple account
+
+1. **Join the Apple Developer Program** ($99/year) at developer.apple.com.
+2. **Agreements, Tax, and Banking** (App Store Connect → Business): accept the Paid Apps
+   agreement and fill in tax and bank details. Required before you can sell anything, including
+   in-app purchases; a free app needs only the free agreement.
+3. **Create an App Store Connect API key** (App Store Connect → Users and Access → Integrations →
+   App Store Connect API → Team Keys). Choose the **Admin** role if fastlane should create
+   signing certificates for you; **App Manager** is enough for uploads, store text, and
+   submission. Download the `.p8` file (Apple only lets you download it once) and note its Key ID
+   and the Issuer ID shown on that page.
+4. **Make an empty private git repo** for your signing certificates (fastlane `match` stores
+   them there, encrypted) and pick a password for it.
+5. **Store the secrets outside any repo** — put the `.p8` in `~/.appstoreconnect/` and add to
+   `~/.zshrc`:
+
+   ```sh
+   export APP_STORE_CONNECT_API_KEY_KEY_ID=XXXXXXXXXX
+   export APP_STORE_CONNECT_API_KEY_ISSUER_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+   export APP_STORE_CONNECT_API_KEY_KEY_FILEPATH=~/.appstoreconnect/AuthKey_XXXXXXXXXX.p8
+   export MATCH_GIT_URL=git@github.com:you/certificates.git
+   export MATCH_PASSWORD='your-match-password'
+   ```
+
+### Once per app
+
+1. **Register the bundle ID** (developer.apple.com → Certificates, Identifiers & Profiles →
+   Identifiers), using the one agreed at GATE 1, e.g. `com.yourname.appname`.
+2. **Create the app record** in App Store Connect (Apps → + → New App: name, primary language,
+   that bundle ID, any SKU). Apple's API doesn't allow this with a key.
+3. **Host two web pages**: a privacy policy and a support page. They must be live URLs; the
+   agents draft the text, you publish it (GitHub Pages or any site works).
+4. **Fill in App Privacy** (your app → App Privacy) from the data-collection list the release
+   manager writes in `docs/60-release.md`. This page also can't be set with an API key.
+5. **Set price and availability** (your app → Pricing and Availability).
+6. **If the app sells anything**, create each in-app purchase in App Store Connect with the
+   product ID the code uses (the release manager lists them), its price, and a review screenshot.
+7. **If the app has a login**, give the studio a demo account for Apple's reviewers.
+
+### During every run
+
+1. **GATE 1 — scope-lock**: read the summary (idea, MVP, architecture, icon) and approve or revise.
+2. **Answer blockers**: anything the agents can't decide shows up in their messages and on the
+   dashboard's Blockers panel. The line stops until you answer.
+3. **Try the TestFlight build** on your own iPhone (TestFlight app) before shipping.
+4. **GATE 2 — ship**: check the screenshots, store text, release notes, and version in the
+   readiness summary, then confirm the upload.
+5. **After submission**: App Review emails you. If the app is rejected, paste Apple's message
+   into the session; the studio fixes what it can, and you reply to Apple in App Store Connect.
+6. **Update App Privacy** whenever the app starts collecting new data.
+
+### What runs without you
+
+Research, PRD, design, icon, architecture, code, tests, review, QA, signing certificates and
+profiles, build numbers, archiving, TestFlight upload and testers, screenshots, store text in
+every language, age rating, export-compliance answers, submission for review, and release after
+approval — all driven by the agents, with uploads waiting for your GATE 2 confirmation.
 
 ## Dashboard
 

@@ -27,7 +27,7 @@ agent its exact inputs from the contract):
 5. `ios-architect` → `docs/20-architecture.md`.
 
 ## 2. GATE 1 — scope-lock
-Summarize to the user: the differentiated idea (2 sentences), the MVP Must list, the module map, the app icon (show `design/icon/AppIcon.appiconset/AppIcon-1024.png`),
+Summarize to the user: the differentiated idea (2 sentences), the MVP Must list, the module map, the bundle ID (e.g. `com.<name>.<app>`), the app icon (show `design/icon/AppIcon.appiconset/AppIcon-1024.png`),
 and the top risk. Ask a single clear approve/revise question. On revise: apply the user's change
 to the affected docs (re-delegate only the affected stage), then ask again. On approval: proceed.
 Do not write any code before approval.

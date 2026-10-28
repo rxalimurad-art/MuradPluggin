@@ -17,7 +17,7 @@ Steps:
 5. Delegate to `ios-architect` → `docs/20-architecture.md`.
 
 Then execute GATE 1 from the contract: summarize the plan (differentiated idea in 2 sentences,
-MVP Must list, module map, top risk, and the icon — show `design/icon/AppIcon.appiconset/AppIcon-1024.png`) and ask the user to approve or revise. Write no code.
+MVP Must list, module map, top risk, the bundle ID, and the icon — show `design/icon/AppIcon.appiconset/AppIcon-1024.png`) and ask the user to approve or revise. Write no code.
 Log `stage_start`/`stage_end` telemetry around each stage and a `gate` event with the user's
 answer (see Telemetry in the `studio-pipeline` skill).
 
