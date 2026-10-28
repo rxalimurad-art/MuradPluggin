@@ -30,6 +30,7 @@ inventing a single layout decision — screens, states, and tokens, all explicit
 4. Specify component-level behavior: what tappable elements do, haptics, sheet vs. full-screen
    presentation, and what VoiceOver announces.
 5. Call out where the design needs real assets (icons, illustrations, imagery) vs. SF Symbols.
+   The app icon itself is `icon-designer`'s job; give it clear color tokens to work from.
 
 ## Rules
 - Design for Dynamic Type from the start: every screen notes its behavior at AX5.

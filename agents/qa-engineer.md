@@ -29,6 +29,10 @@ personally sign off — or refuse — every release candidate.
 3. File every defect to `docs/51-bugs.md` with: repro steps, expected vs actual, severity
    (blocker/major/minor), screenshots or logs, and the suspected area. Set the ticket back to
    `in-progress` for blockers and majors.
+   If the defect is one you already filed for this ticket, mark it `REPEAT` in the bug and your
+   handoff — the caller runs the `qa-regression` recovery (see Self-healing in the `studio-pipeline` skill).
+   Log a `qa` telemetry event per ticket tested, and a `ticket` event for every status you set
+   (see Telemetry in the `studio-pipeline` skill).
 4. Regression: when a bug is fixed, add its repro as a permanent automated check (XCUITest or
    Swift Testing) so it can never silently return.
 5. Ship sign-off: before `app-ship` proceeds, run the full plan against the release build and

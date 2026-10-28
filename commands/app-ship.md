@@ -16,7 +16,8 @@ Invoke the `studio-pipeline` skill and run stage 8. Optional version: $ARGUMENTS
 4. Present the readiness summary: checklist status (green/waived/blocked), artifact paths, the
    exact pending command(s) (e.g. `fastlane pilot` / `deliver --submit_for_review`).
 5. **GATE 2**: ask the user to confirm the upload and its target (TestFlight only, or submit for
-   App Store review). No confirmation, no upload. Record the decision in `docs/60-release.md`.
+   App Store review). No confirmation, no upload. Record the decision in `docs/60-release.md`
+   and log a `gate` telemetry event with it (`stage_start`/`stage_end` for stage 8 too) (see Telemetry in the `studio-pipeline` skill).
 6. On confirmation, have `release-manager` execute and report build/submission IDs, status, and
    any processing wait.
 

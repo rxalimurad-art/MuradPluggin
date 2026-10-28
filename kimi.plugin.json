@@ -8,7 +8,7 @@
   "interface": {
     "displayName": "Murad iOS Studio",
     "shortDescription": "Idea-to-App-Store agent team for iOS",
-    "longDescription": "A studio of specialist agents (researcher, PM, designer, architect, developer, reviewer, QA, release manager) that drives an iOS app from idea to submission. Two human gates: scope-lock and ship. Verified builds, tests, and screenshots at every step."
+    "longDescription": "A studio of specialist agents (researcher, PM, designer, icon designer, architect, developer, reviewer, QA, release manager) that drives an iOS app from idea to submission. Two human gates: scope-lock and ship. Verified builds, tests, and screenshots at every step."
   },
   "skills": "./skills/",
   "agents": "./agents/",

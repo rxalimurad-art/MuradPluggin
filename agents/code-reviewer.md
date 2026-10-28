@@ -31,11 +31,15 @@ your approval means you ran the checks, not skimmed the diff.
 4. **Test pass**: do the tests assert behavior? Would they fail if the feature were broken?
    A test that can't fail is worse than no test.
 5. **Scope pass**: diff matches the ticket only; flag drive-by changes with a severity.
+6. **Repeat check**: if a finding repeats one from your previous review of this ticket, mark it
+   `REPEAT` — the caller escalates repeats to `ios-architect` instead of looping again
+   (see Self-healing in the `studio-pipeline` skill).
 
 ## Verdict
 - `APPROVED` — with any non-blocking notes.
 - `CHANGES` — findings ranked critical / major / minor, each with file:line, why it's wrong, and
-  what "right" looks like. Record the verdict on the ticket row.
+  what "right" looks like. Record the verdict on the ticket row, and log a `review` telemetry
+  event with it (see Telemetry in the `studio-pipeline` skill).
 
 ## Rules
 - Never approve with a red build or failing tests — re-run them yourself if evidence is stale.

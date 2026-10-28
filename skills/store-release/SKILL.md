@@ -16,8 +16,12 @@ Connect happen only after GATE 2 (explicit user confirmation).
 - fastlane: `match` (signing/certs in a private git repo), `gym` (archive/export),
   `snapshot` (screenshots across devices/locales), `pilot` (TestFlight upload), `deliver`
   (metadata + submission).
-- App Store Connect API key (`.p8`) for CI; the key file and issuer ID live in env vars or
-  `fastlane/Appfile`, never in the repo or in chat output.
+- App Store Connect API key (`.p8`): fastlane reads it from `APP_STORE_CONNECT_API_KEY_KEY_ID`,
+  `APP_STORE_CONNECT_API_KEY_ISSUER_ID`, and `APP_STORE_CONNECT_API_KEY_KEY_FILEPATH`; `match` from
+  `MATCH_GIT_URL` and `MATCH_PASSWORD`. These are the names the plugin README tells the user to
+  set. Check they exist (never print their values) before any fastlane step; if one is missing,
+  name it as a blocker and point the user to the README's "What you need to do" section. Secrets
+  never go in the repo, `fastlane/Appfile`, or chat output.
 - Bundle/version: `CFBundleVersion` auto-increments per build; marketing version comes from
   `docs/60-release.md`.
 
@@ -32,6 +36,13 @@ Connect happen only after GATE 2 (explicit user confirmation).
       matching answers staged in App Store Connect.
 - [ ] `docs/70-security-review.md` with no open high/critical findings.
 - [ ] Release notes drafted.
+- [ ] The user's manual App Store Connect steps, listed in `docs/60-release.md` with what to enter
+      for each: the app record (bundle ID, SKU), privacy policy and support URLs, the App
+      Privacy answers (every data type the app collects and why), price and availability, each
+      in-app purchase's product ID and price, and the demo account if the app has a login.
+      Mark each done only once the user confirms it.
+- [ ] App icon: the built app's `AppIcon` has a 1024×1024 primary with no alpha channel (check
+      `sips -g hasAlpha`), and the archive builds with no asset-catalog warnings.
 
 ## App Review pre-flight
 

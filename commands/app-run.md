@@ -4,7 +4,9 @@ argument-hint: <one-line app idea>
 ---
 
 Run the Murad iOS Studio pipeline end to end. Start by invoking the `studio-pipeline` skill and
-following its contract exactly.
+following its contract exactly. Log telemetry as you go: `stage_start`/`stage_end` around every
+stage, a `gate` event after each gate answer, and `ticket` events for status changes you make
+(see Telemetry in the `studio-pipeline` skill).
 
 The idea: $ARGUMENTS
 
@@ -21,11 +23,11 @@ agent its exact inputs from the contract):
 1. `app-researcher` with the idea → `docs/01-research.md`.
 2. Write `docs/00-vision.md` yourself from the research (one page: what, who, why now, success).
 3. `product-manager` → `docs/10-prd.md` + `docs/11-backlog.md`.
-4. `ux-designer` → `docs/12-design.md`.
+4. `ux-designer` → `docs/12-design.md`, then `icon-designer` → `docs/13-icon.md` + `design/icon/`.
 5. `ios-architect` → `docs/20-architecture.md`.
 
 ## 2. GATE 1 — scope-lock
-Summarize to the user: the differentiated idea (2 sentences), the MVP Must list, the module map,
+Summarize to the user: the differentiated idea (2 sentences), the MVP Must list, the module map, the bundle ID (e.g. `com.<name>.<app>`), the app icon (show `design/icon/AppIcon.appiconset/AppIcon-1024.png`),
 and the top risk. Ask a single clear approve/revise question. On revise: apply the user's change
 to the affected docs (re-delegate only the affected stage), then ask again. On approval: proceed.
 Do not write any code before approval.
@@ -43,6 +45,10 @@ Repeat until every ticket is `done` or the loop is blocked:
 4. Enforce the contract: a ticket only reaches `in-review` with build+test+screenshot evidence
    recorded on its row.
 5. After each round, give the user a 5-line standup: done / in-flight / blocked / next.
+
+Self-heal as you go per the contract's Self-healing section: run the health check before each
+round, resume interrupted tickets, follow each failure class's recovery and budget, and escalate
+`REPEAT` findings to `ios-architect`. Include what self-healed in each standup.
 
 If every remaining ticket is blocked or a ticket has failed three loops, stop and ask the user.
 

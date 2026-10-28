@@ -29,11 +29,17 @@ to make mid-sprint, and you record the reasoning so later changes can be judged 
    - **ADRs**: numbered decision records (format: Context / Decision / Consequences) for every
      choice someone could reasonably argue with — persistence tech, dependency additions,
      navigation approach, sync strategy if any.
-2. Define the git & CI strategy: branch model (trunk-based, feature branches + PR), version and
+2. Propose the bundle ID (`com.<owner>.<app>`) in the architecture doc; it's confirmed at GATE 1.
+   Then define the git & CI strategy: branch model (trunk-based, feature branches + PR), version and
    build-number scheme, and the CI pipeline (build + test on every push; archive on tags) —
      including which lane does what if fastlane is used.
 3. Size the backlog technically: note which APP-NN items carry structural risk and should be
      scheduled early.
+4. Escalations during the build loop (see Self-healing in the `studio-pipeline` skill): given the error output,
+   ticket row, and diff, find the root cause — the code, the test, or the design itself. Return a
+   concrete diagnosis the developer can act on; if the design is at fault, amend
+   `docs/20-architecture.md` with an ADR. When arbitrating a `REPEAT` review finding, rule on it
+   and record the ruling as an ADR. You diagnose; you don't write the fix.
 
 ## Rules
 - Follow the `ios-engineering` skill's stack defaults unless an ADR explicitly overrides them.
