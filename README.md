@@ -114,6 +114,8 @@ Or drive the stages manually:
 
 ## Dashboard
 
+![Studio dashboard: pipeline stages and gates, run metrics, ticket board, bugs, blockers, and activity](assets/dashboard.png)
+
 `/murad-ios-studio:app-dashboard` starts a small local server (`dashboard/server.mjs`, Node only,
 no dependencies) and gives you `http://localhost:4777`. Keep it open while the pipeline runs: it
 re-reads your project's `docs/` every few seconds and shows

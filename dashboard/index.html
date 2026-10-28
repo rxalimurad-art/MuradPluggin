@@ -221,7 +221,7 @@ function render(s) {
         <td class="num ${t.changes >= 2 ? 'hot' : ''}">${t.changes}</td><td class="num ${t.qaFails >= 2 ? 'hot' : ''}">${t.qaFails}</td>
         <td class="num">${t.buildFails}</td><td class="num">${t.testFails}</td><td class="num">${t.heals}</td></tr>`).join('')}</table></div>` : ''}
   </section>`;
-  const activity = !m ? '' : `<section class="panel"><h2>Activity</h2><ul class="plain">${m.recent.map((e) =>
+  const activity = !m ? '' : `<section class="panel"><h2>Activity</h2><ul class="plain">${m.recent.slice(0, 10).map((e) =>
     `<li class="ev"><span class="src">${esc(new Date(e.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }))}</span>${esc(describe(e))}</li>`).join('')}</ul></section>`;
 
   app.innerHTML = `
